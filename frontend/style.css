@@ -1,0 +1,1593 @@
+/* ============================================================
+   RTMCP dashboard theme — production ready, self-contained
+   Based on original: "RTMCP dashboard theme — self-contained, no external dependencies."
+   Gain/loss and buildup-tag COLOURS are injected separately from settings.
+   ============================================================ */
+/* ---- Bundled web fonts --------------------------------------
+   @font-face declarations for the two bundled local fonts (no CDN).
+   Declared first so the faces are available before the theme
+   tokens below reference the family names. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/static/fonts/inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/static/fonts/jetbrains-mono.woff2") format("woff2");
+}
+/* =========================
+   VARIABLES
+   ========================= */
+:root {
+  /* ---- Primitive layer: raw values, single source of truth ------------
+     Components should consume the SEMANTIC tokens below (not these directly)
+     so a rebrand is a one-line change. */
+  --bg:             #0B0A11;
+  --card:           #12111A;
+  --card-alt:       #181326;
+  --text:           #FFFFFF;
+  --muted:          #8F8B9F;
+  --border:         #201E2A;
+  --accent:         #7C3AED;
+  --header-bg:      #171226;
+  --strike-bg:      #0D0B14;
+  --hover:          #242133;
+  --text-secondary: #AB9CB8;
+
+  /* ---- Semantic layer: meaning, not raw value (consumed by components) */
+  --success:        #10B981;
+  --danger:         #F43F5E;
+  --warning:        #E5A93C;
+  --info:           #0EA5E9;
+
+  /* Layout tokens */
+  --radius:         10px;
+  --radius-sm:      6px;
+  --radius-pill:    999px;
+
+  /* Typography */
+  --font-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:      "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+
+  /* Motion */
+  --motion-fast:    0.15s;
+  --motion-med:     0.3s;
+
+  /* Platform integration: render native scrollbars / form controls in the dark theme */
+  color-scheme: dark;
+  accent-color: var(--accent);
+}
+
+/* =========================
+   BASE / RESET
+   ========================= */
+/* Border-box everywhere: width:100% + padding/border no longer overflows the viewport. */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, .nicegui-content {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+.nicegui-content {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Accessible focus ring + form-control normalization (inherit theme font/color) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Full-viewport flex shell: top bar pinned on top, content fills the rest. */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+.rtmcp-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 18px;
+  background: linear-gradient(90deg, #161b22, #0d1117);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.rtmcp-header .title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.rtmcp-header .sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========================
+   SUMMARY / STATS
+   ========================= */
+/* Controls bar: symbol/expiry selectors + inline stat chips (class-based, no inline styles) */
+.rtmcp-controls-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.rtmcp-sel-sym { max-width: 200px; }
+.rtmcp-autorefresh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.rtmcp-chart-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0;
+}
+.rtmcp-in-chart { max-width: 240px; }
+
+/* Inline stat chips — share the controls row, height matched to .rtmcp-select (~36px) */
+.rtmcp-stats-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.rtmcp-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.rtmcp-stat-chip-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.rtmcp-stat-chip-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.rtmcp-summary {
+  margin: 0 0 10px 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.rtmcp-summary b { color: var(--text); }
+
+/* =========================
+   TABLE / CARD
+   ========================= */
+.rtmcp-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  overflow: auto;
+  max-height: 78vh;
+  scrollbar-gutter: stable;
+}
+
+/* Table basics */
+.rtmcp-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+  color: var(--text);
+}
+.rtmcp-table th,
+.rtmcp-table td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  transition: background var(--motion-fast);
+}
+.rtmcp-table th:first-child,
+.rtmcp-table td:first-child { text-align: left; }
+
+/* Sticky header */
+.rtmcp-th th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--header-bg);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+
+/* Strike column */
+.rtmcp-strike {
+  text-align: center !important;
+  font-weight: 700;
+  background: var(--strike-bg);
+  color: var(--accent);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* ============================================
+   SYMMETRICAL TABLE - Perfect CSS
+   ============================================ */
+
+/* Wrapper: plain container only. The .rtmcp-card is the single scrollport
+   (overflow:auto + max-height) so position:sticky on the header works.
+   Giving the wrapper its own overflow would create a nested scrollport and
+   break the sticky header. */
+.rtmcp-table-wrapper {
+  width: 100%;
+}
+
+/* ============================================
+   SEMANTIC CELL CLASSES
+   Scoped under .rtmcp-table.rtmcp-symmetrical so they beat the base
+   .rtmcp-table td (0,1,1) rule and the :first-child left-align rule.
+   max-width on <td> is ignored by browsers in table-layout:auto, so only
+   min-width is used for the adaptive sizing.
+   ============================================ */
+
+/* Greek values (Vega, Theta, Gamma, Delta) */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-greek,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-greek {
+  min-width: 68px;
+  text-align: right;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+/* IV (Implied Volatility) */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-iv,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-iv {
+  min-width: 58px;
+  text-align: right;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Percentage columns (Vol%, LTP%) */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pct,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pct {
+  min-width: 68px;
+  text-align: right;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Volume and OI */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-volume,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-volume,
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-oi,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-oi {
+  min-width: 85px;
+  text-align: right;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* LTP (Last Traded Price) - prominence */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-ltp,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-ltp {
+  min-width: 78px;
+  text-align: right;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* Bid/Ask columns - muted, divided */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-bid-ask,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-bid-ask {
+  min-width: 72px;
+  text-align: right;
+  padding: 8px 8px;
+  font-size: 10px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  border-left: 1px solid var(--border);
+}
+
+/* Buildup tags - centered pills (color comes from injected .rtmcp-build-{slug}).
+   Rounded corners only on data cells; the sticky header cell stays flat. */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-buildup,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+  min-width: 100px;
+  text-align: center;
+  padding: 4px 10px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #ffffff;
+}
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+  border-radius: var(--radius-pill);
+}
+
+/* Strike price - CENTER COLUMN */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-strike,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-strike {
+  min-width: 90px;
+  text-align: center;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  background: linear-gradient(180deg, var(--strike-bg) 0%, rgba(27, 34, 48, 0.8) 100%);
+  color: var(--accent);
+  border-left: 2px solid var(--border);
+  border-right: 2px solid var(--border);
+  position: relative;
+  letter-spacing: 0.5px;
+}
+
+/* PCR (Put-Call Ratio) - CENTER COLUMN */
+.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pcr,
+.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pcr {
+  min-width: 72px;
+  text-align: center;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 12px;
+  background: var(--card-alt);
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* ============================================
+   SYMMETRICAL TABLE OVERRIDES
+   ============================================ */
+
+/* Table container */
+.rtmcp-table.rtmcp-symmetrical {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+}
+
+/* Header row styling */
+.rtmcp-table.rtmcp-symmetrical .rtmcp-th th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 12px 8px;
+  background: var(--header-bg);
+  color: var(--muted);
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+/* Center header highlighting */
+.rtmcp-table.rtmcp-symmetrical .rtmcp-th th.rtmcp-cell-strike,
+.rtmcp-table.rtmcp-symmetrical .rtmcp-th th.rtmcp-cell-pcr {
+  background: var(--header-bg);
+  color: var(--accent);
+  font-size: 11px;
+}
+
+/* Data rows */
+.rtmcp-table.rtmcp-symmetrical tbody tr {
+  transition: background var(--motion-fast);
+}
+
+/* Zebra striping */
+.rtmcp-table.rtmcp-symmetrical tbody tr:nth-child(even) {
+  background: var(--card-alt);
+}
+
+/* Hover effect */
+.rtmcp-table.rtmcp-symmetrical tbody tr:hover {
+  background: var(--hover);
+}
+
+/* Row borders (padding is owned by the per-cell .rtmcp-cell-* rules) */
+.rtmcp-table.rtmcp-symmetrical tbody td {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Vertical dividers for center columns */
+.rtmcp-table.rtmcp-symmetrical tbody td.rtmcp-cell-strike,
+.rtmcp-table.rtmcp-symmetrical tbody td.rtmcp-cell-pcr {
+  border-left: 2px solid var(--border);
+  border-right: 2px solid var(--border);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1400px) {
+  .rtmcp-table.rtmcp-symmetrical {
+    font-size: 11px;
+  }
+
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-greek,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-greek,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-iv,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-iv,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pct,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pct,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-volume,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-volume,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-oi,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-oi,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-ltp,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-ltp,
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-bid-ask,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-bid-ask {
+    padding: 7px 8px;
+    min-width: 60px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .rtmcp-table.rtmcp-symmetrical {
+    font-size: 10px;
+  }
+
+  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-buildup,
+  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+    min-width: 85px;
+  }
+}
+
+/* ============================================
+   BACKWARD COMPATIBILITY
+   ============================================ */
+
+/* Keep old classes working (legacy non-symmetrical tables only).
+   The symmetrical table uses scoped .rtmcp-cell-* rules that win over this. */
+.rtmcp-table th:first-child,
+.rtmcp-table td:first-child {
+  text-align: left;
+}
+
+/* Strike class for non-symmetrical tables */
+.rtmcp-strike {
+  text-align: center !important;
+  font-weight: 700;
+  background: var(--strike-bg);
+  color: var(--accent);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* Generic badge/tag */
+.badge, .rtmcp-badge, span.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--border);
+  color: var(--text);
+}
+
+/* Empty placeholder */
+.rtmcp-empty { text-align: center !important; color: var(--muted); }
+
+/* Status indicators */
+.rtmcp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.rtmcp-status.ok { background: rgba(63,185,80,0.15); color: var(--success); }
+.rtmcp-status.err { background: rgba(248,81,73,0.15); color: var(--danger); }
+.rtmcp-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rtmcp-ok, .rtmcp-err { font-weight: 600; }
+
+/* =========================
+   CONTROLS
+   ========================= */
+/* Buttons */
+button, .q-btn, .rtmcp-btn {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--motion-fast), opacity var(--motion-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+button:hover, .q-btn:hover, .rtmcp-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+button:active, .q-btn:active, .rtmcp-btn:active { transform: translateY(0); }
+
+/* Secondary */
+button.secondary, .q-btn-secondary, .rtmcp-btn-secondary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+button.secondary:hover, .q-btn-secondary:hover { border-color: var(--muted); }
+
+/* Inputs */
+input[type="text"], input[type="number"], input[type="search"],
+.q-field input, input.q-input, .rtmcp-input input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  width: 100%;
+  max-width: 200px;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+}
+input:focus, .q-field input:focus, .rtmcp-input input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(88,166,255,0.12);
+}
+
+/* Selects */
+select, .q-select, .q-field--selected, .rtmcp-select select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  min-width: 120px;
+  cursor: pointer;
+}
+select:focus, .q-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(88,166,255,0.12);
+}
+
+/* Symbol combobox (Tools page) — custom dropdown that clears on focus */
+.rtmcp-combo { position: relative; }
+.rtmcp-combo .rtmcp-input { cursor: pointer; }
+.rtmcp-combo-list {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  display: none;
+}
+.rtmcp-combo-list.open { display: block; }
+.rtmcp-combo-opt {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.rtmcp-combo-opt:hover { background: var(--accent); color: #fff; }
+
+/* Checkbox fallback */
+input[type="checkbox"], .q-checkbox, .q-checkbox__svg {
+  accent-color: var(--accent);
+}
+
+/* =========================
+   ALERTS
+   ========================= */
+.alert, .alert-info, .alert-success, .alert-warning, .alert-danger {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.alert-info {
+  background: rgba(88,166,255,0.12);
+  border: 1px solid rgba(88,166,255,0.22);
+  color: var(--info);
+}
+.alert-success {
+  background: rgba(63,185,80,0.12);
+  border: 1px solid rgba(63,185,80,0.22);
+  color: var(--success);
+}
+.alert-warning {
+  background: rgba(210,153,34,0.12);
+  border: 1px solid rgba(210,153,34,0.22);
+  color: var(--warning);
+}
+.alert-danger {
+  background: rgba(248,81,73,0.12);
+  border: 1px solid rgba(248,81,73,0.22);
+  color: var(--danger);
+}
+
+/* =========================
+   FEEDBACK
+   ========================= */
+.rtmcp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.spinner, .rtmcp-spinner, .q-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: rtmcp-spin 0.8s linear infinite;
+}
+@keyframes rtmcp-spin { to { transform: rotate(360deg); } }
+
+/* Progress */
+progress, .q-progress, .rtmcp-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+progress::-webkit-progress-bar { background: var(--border); border-radius: 3px; }
+progress::-webkit-progress-value { background: var(--accent); border-radius: 3px; transition: width 0.3s ease; }
+
+/* =========================
+   CARD
+   ========================= */
+.card, .rtmcp-card-generic {
+  contain: content;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* =========================
+   TYPOGRAPHY
+   ========================= */
+h1,h2,h3,h4,h5,h6 {
+  color: var(--text);
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+h1 { font-size: 24px; }
+h2 { font-size: 20px; }
+h3 { font-size: 18px; }
+
+a, .q-btn--link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity var(--motion-fast);
+}
+a:hover, .q-btn--link:hover { opacity: 0.8; text-decoration: underline; }
+
+/* =========================
+   LAYOUT UTILITIES
+   ========================= */
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-4 { gap: 16px; }
+
+/* =========================
+   SCROLLBARS
+   ========================= */
+/* Global minimal scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--card); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Scoped scrollbars */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-responsive::-webkit-scrollbar { height: 8px; }
+.table-responsive::-webkit-scrollbar-track { background: var(--card); }
+.table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+.rtmcp-card::-webkit-scrollbar, .table-responsive::-webkit-scrollbar { width: 10px; height: 10px; }
+.rtmcp-card::-webkit-scrollbar-track, .table-responsive::-webkit-scrollbar-track { background: var(--card-alt); }
+.rtmcp-card::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+.rtmcp-card::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Always-visible horizontal scroll proxy under the chain table (wired in market.js).
+   Gives a reachable horizontal scroll control so users never hunt for the
+   card's native scrollbar, which sits at the bottom of a tall scroll container. */
+.rtmcp-hscroll {
+  width: 100%;
+  height: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 6px;
+}
+.rtmcp-hscroll > div { height: 1px; }
+.rtmcp-hscroll::-webkit-scrollbar { height: 8px; }
+.rtmcp-hscroll::-webkit-scrollbar-track { background: var(--card-alt); border-radius: 4px; }
+.rtmcp-hscroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.rtmcp-hscroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* =========================
+   NICEGUI OVERRIDES
+   ========================= */
+.nicegui-content label, .q-field__label { color: var(--muted); }
+.q-field--filled .q-field__control { background: var(--card); border-color: var(--border); }
+.q-field__control:before { border-bottom-color: var(--border); }
+
+/* =========================
+   FORM ELEMENTS
+   ========================= */
+textarea, .q-field textarea, .rtmcp-textarea textarea {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  width: 100%;
+  max-width: 600px;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+}
+textarea:focus, .q-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(88,166,255,0.12);
+}
+
+/* Details / Summary */
+details {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+details[open] { border-color: var(--accent); }
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 13px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: "▶";
+  font-size: 10px;
+  color: var(--muted);
+  transition: transform var(--motion-fast);
+}
+details[open] summary::before { transform: rotate(90deg); }
+summary:hover { color: var(--accent); }
+
+/* Fieldset / Legend */
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+legend {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0 8px;
+}
+
+/* =========================
+   TOOLTIPS
+   ========================= */
+.tooltip { position: relative; display: inline-block; }
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--header-bg);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  border: 1px solid var(--border);
+  z-index: 100;
+}
+.tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  border: 4px solid transparent;
+  border-top-color: var(--border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  z-index: 100;
+}
+.tooltip:hover::after, .tooltip:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* Tooltip variants */
+.tooltip.info::after {
+  background: rgba(88,166,255,0.12);
+  border-color: rgba(88,166,255,0.22);
+  color: var(--info);
+}
+.tooltip.warning::after {
+  background: rgba(210,153,34,0.12);
+  border-color: rgba(210,153,34,0.22);
+  color: var(--warning);
+}
+.tooltip.success::after {
+  background: rgba(63,185,80,0.12);
+  border-color: rgba(63,185,80,0.22);
+  color: var(--success);
+}
+.tooltip.error::after {
+  background: rgba(248,81,73,0.12);
+  border-color: rgba(248,81,73,0.22);
+  color: var(--danger);
+}
+
+/* =========================
+   SKELETON LOADING
+   ========================= */
+.skeleton-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  align-items: center;
+}
+.skeleton-cell {
+  background: linear-gradient(90deg, var(--card-alt) 25%, var(--hover) 50%, var(--card-alt) 75%);
+  background-size: 200% 100%;
+  animation: rtmcp-skeleton 1.5s infinite;
+  border-radius: 4px;
+  height: 14px;
+}
+.skeleton-cell.wide { width: 120px; }
+.skeleton-cell.medium { width: 80px; }
+.skeleton-cell.narrow { width: 50px; }
+.skeleton-cell.strike {
+  width: 60px;
+  background: linear-gradient(90deg, var(--strike-bg) 25%, var(--hover) 50%, var(--strike-bg) 75%);
+}
+
+/* Canonical skeleton keyframes */
+@keyframes rtmcp-skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =========================
+   ACCESSIBILITY
+   ========================= */
+/* Focus visible */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+/* Remove outline for mouse users */
+button:focus:not(:focus-visible), input:focus:not(:focus-visible), select:focus:not(:focus-visible) {
+  outline: none;
+}
+/* Text selection */
+::selection { background: rgba(88,166,255,0.3); color: var(--text); }
+::-moz-selection { background: rgba(88,166,255,0.3); color: var(--text); }
+
+/* Visually hidden utility */
+.u-visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+  border: 0; padding: 0; margin: -1px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .rtmcp-spinner, .rtmcp-pulse, .rtmcp-skeleton, .rtmcp-fade-in, .rtmcp-slide-up, .spinner {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 1280px) {
+  .rtmcp-table { font-size: 12px; }
+  .rtmcp-table th, .rtmcp-table td { padding: 6px 8px; }
+}
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .rtmcp-header { padding: 12px 14px; }
+  .rtmcp-header .title { font-size: 18px; }
+}
+@media (max-width: 640px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .rtmcp-table { font-size: 11px; }
+  .rtmcp-table th, .rtmcp-table td { padding: 4px 6px; }
+}
+
+/* =========================
+   PRINT
+   ========================= */
+@media print {
+  body, .nicegui-content { background: #fff !important; color: #000 !important; }
+  .rtmcp-card, .card { box-shadow: none; border: 1px solid #ccc; }
+  .rtmcp-header { background: #f5f5f5; border-bottom: 2px solid #333; }
+  button, .q-btn { background: #333 !important; color: #fff !important; }
+  .rtmcp-controls, button, input, select, .q-field { display: none !important; }
+}
+
+/* =========================
+   SETUP PANEL
+   ========================= */
+.rtmcp-setup {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.rtmcp-setup-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+/* =========================
+   BUTTON / BADGE SIZES
+   ========================= */
+.button.sm, button.sm, .q-btn--size-sm {
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  line-height: 1.4;
+}
+.button.lg, button.lg, .q-btn--size-lg {
+  padding: 12px 24px !important;
+  font-size: 15px !important;
+  line-height: 1.5;
+}
+.badge.sm, .rtmcp-badge.sm, span.tag.sm {
+  font-size: 10px; padding: 1px 6px;
+}
+.badge.lg, .rtmcp-badge.lg, span.tag.lg {
+  font-size: 13px; padding: 4px 10px;
+}
+
+/* =========================
+   FORM VALIDATION
+   ========================= */
+input.valid, .q-field--valid input { border-color: var(--success); }
+input.valid:focus, .q-field--valid input:focus { box-shadow: 0 0 0 2px rgba(63,185,80,0.12); }
+input.invalid, .q-field--error input { border-color: var(--danger); }
+input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(248,81,73,0.12); }
+.q-field__messages { color: var(--danger); font-size: 11px; margin-top: 4px; }
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+.rtmcp-empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 20px; color: var(--muted); text-align: center;
+}
+.rtmcp-empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.rtmcp-empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+.rtmcp-empty-state p { font-size: 13px; max-width: 400px; }
+
+/* =========================
+   TABS
+   ========================= */
+.rtmcp-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.rtmcp-tabs:empty { display: none; }
+.rtmcp-tab {
+  padding: 10px 20px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 500;
+  border-bottom: 2px solid transparent; transition: all var(--motion-fast); margin-bottom: -1px;
+}
+.rtmcp-tab:hover { color: var(--text); }
+.rtmcp-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.rtmcp-tab-content { min-height: 200px; }
+
+/* =========================
+   MODAL / DIALOG
+   ========================= */
+.rtmcp-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+@supports not ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .rtmcp-modal { background: rgba(0,0,0,0.85); }
+}
+.rtmcp-modal.hidden { display: none; }
+.rtmcp-modal-content {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: rtmcp-modal-in var(--motion-med) ease;
+}
+@keyframes rtmcp-modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.rtmcp-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.rtmcp-modal-title { font-size: 18px; font-weight: 600; color: var(--text); margin: 0; }
+.rtmcp-modal-close {
+  background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer;
+  padding: 4px 8px; border-radius: 4px;
+}
+.rtmcp-modal-close:hover { background: var(--border); color: var(--text); }
+.rtmcp-modal-body { color: var(--text); font-size: 14px; line-height: 1.6; }
+.rtmcp-modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* =========================
+   DIVIDERS
+   ========================= */
+.rtmcp-divider { height: 1px; background: var(--border); margin: 16px 0; }
+.rtmcp-divider.vertical { width: 1px; height: auto; margin: 0 16px; }
+.rtmcp-divider.dashed { border-top: 1px dashed var(--border); background: none; }
+
+/* =========================
+   BADGE COUNT
+   ========================= */
+.rtmcp-badge-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--radius-pill);
+  background: var(--accent); color: #fff; font-size: 11px; font-weight: 600;
+}
+.rtmcp-badge-count.sm { min-width: 14px; height: 14px; font-size: 10px; padding: 0 4px; }
+.rtmcp-badge-count.lg { min-width: 22px; height: 22px; font-size: 12px; padding: 0 6px; }
+
+/* =========================
+   PAGINATION
+   ========================= */
+.rtmcp-pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0; }
+.rtmcp-page-btn {
+  padding: 6px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); font-size: 13px; cursor: pointer; transition: all var(--motion-fast);
+}
+.rtmcp-page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.rtmcp-page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rtmcp-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.rtmcp-page-info { font-size: 12px; color: var(--muted); margin: 0 8px; }
+
+/* =========================
+   BREADCRUMB
+   ========================= */
+.rtmcp-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.rtmcp-breadcrumb a { color: var(--accent); text-decoration: none; }
+.rtmcp-breadcrumb a:hover { text-decoration: underline; }
+.rtmcp-breadcrumb-sep { color: var(--border); }
+.rtmcp-breadcrumb-current { color: var(--text); }
+
+/* =========================
+   LISTS
+   ========================= */
+.rtmcp-list { list-style: none; padding: 0; margin: 0; }
+.rtmcp-list-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px;
+  transition: background var(--motion-fast);
+}
+.rtmcp-list-item:hover { background: var(--hover); }
+.rtmcp-list-item + .rtmcp-list-item { border-top: 1px solid var(--border); }
+.rtmcp-list-icon {
+  width: 32px; height: 32px; border-radius: 6px; background: var(--card-alt);
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.rtmcp-list-content { flex: 1; }
+.rtmcp-list-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.rtmcp-list-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.rtmcp-list-action { color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.rtmcp-list-action:hover { background: var(--border); color: var(--text); }
+
+/* =========================
+   PROGRESS STEPS
+   ========================= */
+.rtmcp-progress-steps { display: flex; align-items: center; gap: 0; margin: 20px 0; }
+.rtmcp-step {
+  display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;
+}
+.rtmcp-step:not(:last-child)::after {
+  content: ""; position: absolute; top: 14px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: 0;
+}
+.rtmcp-step.completed:not(:last-child)::after { background: var(--success); }
+.rtmcp-step.active:not(:last-child)::after { background: linear-gradient(90deg, var(--accent) 50%, var(--border) 50%); }
+.rtmcp-step-circle {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--card); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--muted);
+  z-index: 1; transition: all var(--motion-fast);
+}
+.rtmcp-step.completed .rtmcp-step-circle { background: var(--success); border-color: var(--success); color: #fff; }
+.rtmcp-step.active .rtmcp-step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rtmcp-step-label { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+.rtmcp-step.completed .rtmcp-step-label, .rtmcp-step.active .rtmcp-step-label { color: var(--text); }
+
+/* =========================
+   SKELETON TABLE ROWS
+   ========================= */
+.rtmcp-skeleton-row { display: flex; gap: 8px; padding: 10px 16px; align-items: center; border-bottom: 1px solid var(--border); }
+.rtmcp-skeleton-row:last-child { border-bottom: none; }
+.rtmcp-skeleton-cell {
+  background: linear-gradient(90deg, var(--card-alt) 25%, var(--hover) 50%, var(--card-alt) 75%);
+  background-size: 200% 100%; animation: rtmcp-skeleton 1.5s infinite; border-radius: 4px; height: 14px;
+}
+.rtmcp-skeleton-cell.wide { width: 100px; }
+.rtmcp-skeleton-cell.medium { width: 70px; }
+.rtmcp-skeleton-cell.narrow { width: 50px; }
+.rtmcp-skeleton-cell.strike { width: 60px; background: linear-gradient(90deg, var(--strike-bg) 25%, var(--hover) 50%, var(--strike-bg) 75%); }
+.rtmcp-skeleton-cell.cell { width: 80px; }
+.rtmcp-skeleton-cell.pill { width: 60px; height: 20px; border-radius: var(--radius-pill); }
+
+/* =========================
+   ANIMATIONS
+   ========================= */
+@keyframes rtmcp-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.rtmcp-fade-in { animation: rtmcp-fade-in var(--motion-med) ease; }
+@keyframes rtmcp-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.rtmcp-slide-up { animation: rtmcp-slide-up var(--motion-med) ease; }
+@keyframes rtmcp-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+.rtmcp-pulse { animation: rtmcp-pulse 2s infinite; }
+
+/* =========================
+   VISUAL REGRESSION / DEBUG HELPERS (optional)
+   ========================= */
+/* .debug-outline * { outline: 1px dashed rgba(255,0,0,0.08); } */
+
+/* =========================
+   SETTINGS (collapsible)
+   ========================= */
+.rtmcp-settings {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 16px 14px;
+  margin-bottom: 14px;
+}
+.rtmcp-settings .q-expansion-item__header { color: var(--text); font-weight: 600; }
+.rtmcp-settings .q-expansion-item__content { padding-top: 8px; }
+
+/* =========================
+   TOP BAR (brand + ticker + page tabs)
+   One full-width horizontal header like a trading terminal.
+   ========================= */
+.rtmcp-topbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  row-gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 18px;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.rtmcp-home-icon {
+  color: var(--muted);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--motion-fast), background var(--motion-fast);
+}
+.rtmcp-home-icon:hover,
+.rtmcp-gear-icon:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+.rtmcp-gear-icon {
+  color: var(--muted);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--motion-fast), background var(--motion-fast);
+}
+.rtmcp-nav-link {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  user-select: none;
+  transition: color var(--motion-fast), background var(--motion-fast);
+}
+.rtmcp-nav-link:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+.rtmcp-nav-link.active { color: var(--accent); }
+
+/* =========================
+   HOME / INDEX PAGE
+   ========================= */
+.rtmcp-home { max-width: 980px; margin: 24px auto; padding: 0 18px; }
+.rtmcp-home-title { font-size: 28px; font-weight: 200; margin: 0 0 6px; }
+.rtmcp-home-sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+.rtmcp-home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.rtmcp-home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  transition: border-color var(--motion-fast), transform var(--motion-fast), box-shadow var(--motion-fast);
+}
+.rtmcp-home-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.rtmcp-home-card-title { font-size: 18px; font-weight: 200; }
+.rtmcp-home-card-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+.rtmcp-home-card-go { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 4px; }
+.rtmcp-chart-page { max-width: 1100px; margin: 16px auto; padding: 0 18px; }
+.rtmcp-chart-canvas { width: 100%; height: 420px; }
+.rtmcp-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+/* Ticker cards are compact inside the top bar (override the standalone block below) */
+.rtmcp-topbar .rtmcp-ticker {
+  margin-bottom: 0;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.rtmcp-topbar .rtmcp-ticker-card {
+  flex: 0 1 auto;
+  padding: 6px 14px;
+  min-width: 0;
+}
+.rtmcp-topbar .rtmcp-ticker-last { font-size: 12px; }
+.rtmcp-topbar .rtmcp-ticker-name { font-size: 12px; }
+.rtmcp-topbar .rtmcp-ticker-chg { min-width: 0; text-align: right; }
+.rtmcp-topbar .rtmcp-ticker-err { min-width: 0; }
+.rtmcp-topbar .q-tabs { border-bottom: none; margin-left: auto; }
+
+/* =========================
+   TOP TICKER BAR
+   ========================= */
+.rtmcp-ticker {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.rtmcp-ticker-card {
+  flex: 1 1 220px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  transition: border-color var(--motion-fast);
+}
+.rtmcp-ticker-card:hover { border-color: var(--accent); }
+.rtmcp-ticker-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.rtmcp-ticker-stack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  line-height: 1.05;
+}
+.rtmcp-ticker-line2 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.rtmcp-ticker-line2 .rtmcp-ticker-last { margin-left: 0; }
+.rtmcp-ticker-name {
+  font-size: 13px;
+  font-weight: 200;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.rtmcp-ticker-last {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+.rtmcp-ticker-chg {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 160px;
+  text-align: right;
+}
+.rtmcp-ticker-err {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 160px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   INDIA VIX HERO
+   ========================= */
+.rtmcp-vix-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.rtmcp-vix-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+}
+.rtmcp-vix-value {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.rtmcp-vix-change {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================
+   TABS (NiceGUI native, dark)
+   ========================= */
+.q-tabs { background: transparent; border-bottom: 1px solid var(--border); }
+.q-tab { color: var(--muted); font-weight: 500; }
+.q-tab:hover { color: var(--text); }
+.q-tab__label { font-size: 13px; }
+.q-tab--active, .q-tab.q-router-link--active { color: var(--accent); }
+.q-tab--active .q-tab__indicator { background: var(--accent); height: 2px; }
+.q-tab-panels { background: transparent; }
+
+/* =========================
+   DATA DISPLAY (color emphasis + buildup pill)
+   ========================= */
+.rtmcp-up   { color: var(--success); font-weight: 600; }
+.rtmcp-down { color: var(--danger);  font-weight: 600; }
+.rtmcp-flat { color: var(--muted);   font-weight: 600; }
+
+/* Buildup tag base (color is injected per-tag via .rtmcp-build-{slug}).
+   Kept display:inline-block only for legacy <span> usage; on the <td> the
+   .rtmcp-cell-buildup rule above provides the pill look. */
+.rtmcp-build {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  text-align: center;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* =========================
+   SPA SHELL (Falcon + static HTML)
+   ========================= */
+body { min-height: 100vh; }
+.rtmcp-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding: 0 18px 24px;
+}
+.page { display: none; }              /* shown by app.js; one visible at a time */
+.rtmcp-chart-grid { width: 100%; margin-top: 8px; }
+.rtmcp-chain { margin-top: 8px; }
+
+/* =========================
+   TOOLS TEST PAGE
+   ========================= */
+.rtmcp-tools-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.rtmcp-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--card-alt);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+.rtmcp-pill.ok { color: var(--success); border-color: rgba(16,185,129,0.4); }
+.rtmcp-pill.err { color: var(--danger); border-color: rgba(244,63,94,0.4); }
+
+.rtmcp-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+.rtmcp-tool-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.rtmcp-tool-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.rtmcp-tool-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+  font-size: 13px;
+}
+.rtmcp-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.04em;
+}
+.rtmcp-badge.ok { background: rgba(16,185,129,0.15); color: var(--success); }
+.rtmcp-badge.err { background: rgba(244,63,94,0.15); color: var(--danger); }
+.rtmcp-json {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* End of file - RTMCP theme production ready */

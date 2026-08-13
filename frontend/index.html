@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RTMCP - Market Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- Top bar: home + live ticker + page navigation (built by router.js) + settings gear -->
+  <div class="rtmcp-topbar">
+    <span class="rtmcp-home-icon" id="homeBtn" title="Home">&#8962;</span>
+    <div class="rtmcp-topbar-left">
+      <div class="rtmcp-ticker" id="ticker"></div>
+    </div>
+    <div class="rtmcp-tabs" id="navTabs"></div>
+    <span class="rtmcp-nav-link" id="chainLink" title="Option Chain">Option Chain</span>
+    <span class="rtmcp-nav-link" id="chartsLink" title="Charts">Charts</span>
+    <span class="rtmcp-gear-icon" id="gearBtn" title="Upstox settings">&#9881;</span>
+  </div>
+
+  <!-- Pages are mounted here by the router; nothing is hardcoded. -->
+  <main class="rtmcp-content"></main>
+
+  <!-- Chart library (classic global script, must load before the module entry). -->
+  <script src="/static/vendor/lightweight-charts.js"></script>
+  <!-- Application entry point (ES module; pulls in router/api/pages/components). -->
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>

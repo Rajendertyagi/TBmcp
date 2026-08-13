@@ -1,0 +1,50 @@
+# What is TBMCP?
+
+**TBMCP** (package name `rtmcp`) is a Python project that puts Indian market
+data (NIFTY, BANKNIFTY, FINNIFTY, SENSEX, India VIX options and futures, etc.)
+in front of two kinds of users:
+
+1. **An AI assistant** (e.g. Claude Desktop) — so it can answer questions about
+   the market by calling MCP tools.
+2. **A human** — through a web dashboard opened in a browser.
+
+Both sides read the same live data from the **Upstox** broker through one shared
+data layer, so the AI view and the human view never disagree.
+
+## The two deliverables
+
+| Deliverable | For whom | What it is | How it runs |
+|---|---|---|---|
+| **MCP server (AI)** | The AI client | A server built on the forked ZeroMCP engine exposing **35 tools** (raw market data + derived F&O analytics / strategy pricers) | `python main.py mcp` (stdio transport) |
+| **Web dashboard (human)** | A human | A single-page app with a live ticker, option-chain table, charts, and one-click Upstox login | `python main.py ui` (Falcon web server, static HTML/JS) |
+
+Both can run together with `python main.py` (default) or `python main.py both`.
+
+## What it can do
+
+- **Market data:** live quotes (LTP/OHLC), option chains, futures chains, expiry
+  dates, historical candles, market depth, and exchange status/holidays/timings.
+- **Derived F&O analytics:** put-call ratio, max pain, top-OI strikes, ATM
+  strike, IV skew, OI buildup classification, support/resistance, straddle
+  pricing, gamma exposure, futures basis.
+- **Strategy pricing:** long straddle, long strangle, bull call spread, bear put
+  spread, iron condor, long butterfly.
+- **Dashboard pages:** Home (overview cards), market pages per index, India VIX,
+  chart builder, Tools (runs every tool once), and an Upstox settings/login page.
+
+## Tech stack
+
+| Layer | Choice | Why |
+|---|---|---|
+| Language | Python **>= 3.11** | — |
+| AI server engine | **ZeroMCP** — forked, zero-dependency MCP framework at `zeromcp/` | We control it; stdio transport; see [decisions/adr-001-zeromcp-engine.md](decisions/adr-001-zeromcp-engine.md) |
+| Human dashboard backend | **Falcon** — zero-dependency WSGI framework | Cleanest Nuitka freeze; see [decisions/adr-002-falcon-dashboard.md](decisions/adr-002-falcon-dashboard.md) |
+| Human dashboard frontend | **Vanilla JS** ES modules + HTML/CSS | No framework; see [frontend/guide.md](frontend/guide.md) |
+| Charts | TradingView **lightweight-charts** v4 (bundled locally) | Browser-side; fed with Upstox candles |
+| Data source | **Upstox v2/v3 REST API** via `providers/upstox.py` | Behind the `DataProvider` abstraction; see [decisions/adr-003-data-provider-abstraction.md](decisions/adr-003-data-provider-abstraction.md) |
+| HTTP server (prod) | **Waitress** | Serves the Falcon app |
+| Packaging | **Nuitka** onefile `.exe` (release only) | Single portable binary; see [packaging/nuitka.md](packaging/nuitka.md) |
+
+Credentials live in a local `.env` file next to the app (API key, secret,
+redirect URI); the OAuth token is stored in `.upstox-token.json` in the same
+folder. See [development/local.md](development/local.md).

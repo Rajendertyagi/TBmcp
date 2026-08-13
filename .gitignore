@@ -1,0 +1,28 @@
+# Local test / virtualenv artifacts (never commit)
+.venv-test/
+.venv/
+venv/
+env/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Packaging / build output (Nuitka onefile, wheels, dist)
+build/
+dist/
+*.bin
+*.onefile-build/
+
+# Runtime / debug dumps written at runtime
+debug_*.json
+
+# Secrets — never commit credentials
+.env
+.upstox-token.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db

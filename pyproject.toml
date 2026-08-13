@@ -1,0 +1,42 @@
+[project]
+name = "TBMcp"
+version = "0.1.0"
+description = "Trading-data MCP server + web UI (Upstox-backed). One Python codebase for the AI (MCP tools) and the human (Falcon + static HTML dashboard)."
+requires-python = ">=3.11"
+# Install deps with:
+#   pip install falcon waitress requests
+# Then run from source (no compile needed for development):
+#   python main.py ui     # human web dashboard (Falcon)
+#   python main.py mcp    # AI-facing MCP server (stdio)
+dependencies = [
+    "falcon",
+    "waitress",
+    "requests",
+]
+
+# Dev/test tooling — installed with `uv sync --group dev` (CI), never part of
+# the packaged app. pytest drives tests/unit and tests/integration offline;
+# tests/live is gated behind TBMcp_RUN_LIVE=1 and must never run in CI.
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+# Offline suites only. Live-broker tests live in tests/live and are excluded
+# from the default run (they need real credentials + TBMcp_RUN_LIVE=1).
+testpaths = [
+    "tests/unit",
+    "tests/integration",
+]
+markers = [
+    "live: requires live Upstox credentials; enable with RTMCP_RUN_LIVE=1",
+]
+addopts = "-q"
+
+# Nuitka (release-only, run in CI — never locally): produces a standalone TBMcp.exe
+# with config/token/log living next to the exe (portable single folder).
+#   python -m nuitka --onefile \
+#       --include-package=zeromcp \
+#       --include-data-dir=frontend=frontend \
+#       --include-package=falcon,waitress,requests main.py

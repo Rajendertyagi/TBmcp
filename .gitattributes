@@ -1,0 +1,10 @@
+# Line-ending normalization: store LF in the repo, check out platform-native.
+# Fixes the mixed CRLF/LF state (repo had ~104 CRLF vs ~74 LF files).
+* text=auto
+
+# Binary files - never touched by EOL normalization.
+*.woff2 binary
+*.pyc binary
+*.png binary
+*.jpg binary
+*.ico binary
