@@ -30,7 +30,8 @@ TBMCP/                       # git repo root = the app
 │
 ├── analytics/               # derived F&O analytics — pure functions over models
 │   ├── __init__.py          #   re-exports 13 public names
-│   └── options.py           #   compute_* / price_strategy / classify_buildup
+│   ├── option_chain.py      #   chain analytics (compute_*) + buildup tagging
+│   └── strategies.py        #   strategy pricers (price_strategy)
 │
 ├── mcp/                     # AI-facing MCP server
 │   ├── server.py            #   assembly: shared McpServer + tool registration

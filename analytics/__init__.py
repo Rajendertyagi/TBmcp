@@ -8,7 +8,7 @@ broker layer thin.
 """
 from __future__ import annotations
 
-from .options import (
+from .option_chain import (
     compute_pcr,
     compute_max_pain,
     compute_top_oi_strikes,
@@ -19,10 +19,10 @@ from .options import (
     compute_straddle,
     compute_gex,
     compute_futures_basis,
-    price_strategy,
     classify_buildup,
     buildup_color,
 )
+from .strategies import price_strategy
 
 __all__ = [
     "compute_pcr",

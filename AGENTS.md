@@ -62,6 +62,8 @@ TBMCP/                       # git repo root = the app
 │       └── upstox_fundamentals.py #     chains, quotes, futures, depth, margin, market info
 │                                #     fundamentals / news / option Greeks
 ├── analytics/               # derived F&O analytics — pure functions over models
+│   ├── option_chain.py      #   chain analytics (compute_*) + buildup tagging
+│   └── strategies.py        #   strategy pricers (price_strategy)
 ├── mcp/                     # AI-facing MCP server (server.py + tool modules)
 │   ├── market_data.py       #   19 raw market-data tools (get_*)
 │   ├── fundamentals.py      #   7 fundamentals/news/Greeks tools

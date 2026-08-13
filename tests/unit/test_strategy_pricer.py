@@ -8,7 +8,7 @@ bug in ``_payoff_at`` (a sold leg must subtract, not add, its payoff).
 from __future__ import annotations
 
 from analytics import price_strategy
-from analytics.options import _payoff_at
+from analytics.strategies import _payoff_at
 
 from tests.unit.conftest import make_option_chain
 
