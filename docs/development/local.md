@@ -2,7 +2,8 @@
 
 ## Requirements
 
-- **Python >= 3.11**
+- **Python >= 3.11** (the repo pins **3.13** via `.python-version`; CI tests and
+  the Nuitka `.exe` build also run on 3.13 — see `.github/workflows/`)
 - **uv** (package/venv manager) — install from https://docs.astral.sh/uv/
 
 ## Setup

@@ -36,6 +36,9 @@ python -m nuitka --onefile \
 
 ## Notes
 
+- The frozen build targets **Python 3.13 with the MSVC toolchain**
+  (`.github/workflows/build.yml` pins 3.13 and passes `--msvc=latest`); the app
+  itself supports `>=3.11`, but the release `.exe` is produced on 3.13.
 - CI (`.github/workflows/ci.yml`) only **validates** — syntax check, CLI smoke
   test, offline pytest — it never produces the `.exe`. Building is a deliberate
   manual step you run yourself at release time.
