@@ -13,6 +13,8 @@ and what are the consequences?*
 | [adr-003-data-provider-abstraction.md](adr-003-data-provider-abstraction.md) | All broker access behind a `DataProvider` protocol. |
 | [adr-004-file-responsibility.md](adr-004-file-responsibility.md) | Every important file has a clear reason to change; name files for their responsibility. |
 | [adr-005-mcp-modularization.md](adr-005-mcp-modularization.md) | One MCP module per tool category, one shared `McpServer`; tool names are a stable contract. |
+| [adr-006-development-workflow.md](adr-006-development-workflow.md) | Every new feature follows a fixed 7-step development workflow (understand → ownership → modularity → implement → test → document → report); major restructuring stops and is reported first. |
+| [adr-007-no-giant-files.md](adr-007-no-giant-files.md) | No giant files: prefer 20 focused modules over 5 giant modules; split files that hold many unrelated responsibilities (line count is a smell, not the rule). |
 
 ## Writing new ADRs
 
@@ -38,5 +40,5 @@ What we considered and why we did not choose it.
 What gets easier / harder because of this decision.
 ```
 
-Number the next file `adr-006-<topic>.md`. One decision per file; link between
+Number the next file `adr-008-<topic>.md`. One decision per file; link between
 files when one supersedes another.

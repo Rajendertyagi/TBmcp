@@ -51,7 +51,7 @@ real layers above it with zero network:
   (defaults to Upstox, unknown provider raises), and the fake structurally
   conforms to all 30 `DataProvider` methods.
 - `test_mcp_server.py` — **the 42 registered MCP tool names are a stable
-  contract** (see AGENTS.md §16.1). A refactor that renames a tool fails this
+  contract** (see AGENTS.md §17.1). A refactor that renames a tool fails this
   suite. This replaces the old inline CI inventory check.
 - `test_api_routes.py` — every Falcon route through a `TestClient`: happy
   paths, 400s for missing params, settings round-trip, login status, and the

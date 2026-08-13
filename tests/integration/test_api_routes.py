@@ -105,12 +105,12 @@ class TestLogin:
     def test_login_status_connected(self, api_client, monkeypatch, tmp_path):
         token = tmp_path / "t.json"
         token.write_text("{}", encoding="utf-8")
-        monkeypatch.setattr("api.routes.resolve_token_read_path", lambda: str(token))
+        monkeypatch.setattr("api.routes.auth.resolve_token_read_path", lambda: str(token))
         assert api_client.simulate_get("/api/login-status").json == {"connected": True}
 
     def test_login_status_disconnected(self, api_client, monkeypatch, tmp_path):
         missing = tmp_path / "nope.json"
-        monkeypatch.setattr("api.routes.resolve_token_read_path", lambda: str(missing))
+        monkeypatch.setattr("api.routes.auth.resolve_token_read_path", lambda: str(missing))
         assert api_client.simulate_get("/api/login-status").json == {"connected": False}
 
     def test_login_requires_code(self, api_client):

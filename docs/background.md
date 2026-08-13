@@ -41,6 +41,14 @@ Each full decision record (context, options, consequences) lives in
 5. **MCP Modularization rule.** One module per tool category, registered against
    a single shared MCP instance; tool names stay stable.
    → [decisions/adr-005-mcp-modularization.md](decisions/adr-005-mcp-modularization.md)
+6. **Development Workflow rule.** Every new feature follows a fixed 7-step
+   sequence (understand → ownership → modularity → implement → test → document →
+   report); major restructuring stops and is reported before proceeding.
+   → [decisions/adr-006-development-workflow.md](decisions/adr-006-development-workflow.md)
+7. **No-giant-files rule.** Do not let files balloon just because the app grew;
+   prefer focused modules and split files that hold many unrelated
+   responsibilities.
+   → [decisions/adr-007-no-giant-files.md](decisions/adr-007-no-giant-files.md)
 
 ## Why this matters
 

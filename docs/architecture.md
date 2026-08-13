@@ -21,7 +21,12 @@ TBMCP/                       # git repo root = the app
 ├── providers/               # DataProvider abstraction (swap brokers here)
 │   ├── __init__.py          #   create_provider() factory + re-exports
 │   ├── base.py              #   30-method DataProvider protocol
-│   └── upstox.py            #   UpstoxClient: the Upstox v2/v3 REST adapter
+│   └── upstox.py            #   UpstoxClient assembler — composed of domain mixins:
+│       ├── upstox_parsing.py      #     raw-response parsing + debug dumps
+│       ├── upstox_connect.py      #     auth + token lifecycle + rate-limited transport
+│       ├── upstox_resolution.py   #     symbol → instrument-key / lot-size resolution
+│       ├── upstox_market_data.py  #     chains, quotes, futures, depth, margin, market info
+│       └── upstox_fundamentals.py #     fundamentals / news / option Greeks
 │
 ├── analytics/               # derived F&O analytics — pure functions over models
 │   ├── __init__.py          #   re-exports 13 public names
@@ -36,7 +41,12 @@ TBMCP/                       # git repo root = the app
 ├── api/                     # human-facing Falcon web dashboard
 │   ├── app.py               #   WSGI assembly: create_app/build_app + helpers
 │   ├── render.py            #   pure HTML rendering for the chain table
-│   └── routes/              #   one Resource class per HTTP endpoint
+│   └── routes/              #   one Resource class per HTTP endpoint, split by
+│       ├── market.py        #     responsibility (re-exported via __init__.py):
+│       ├── fundamentals.py  #     market data (ticker/quote/chain/expiries/history/vix)
+│       ├── auth.py          #     fundamentals / news / option Greeks
+│       ├── tools.py         #     settings + OAuth login flow
+│       └── __init__.py      #     "test all" batch (Tools page)
 │
 ├── services/
 │   └── tools_runner.py      # runs every tool once ("Test All" batch, shared logic)
@@ -138,6 +148,16 @@ return `json.dumps(...)` strings; the engine handles tool errors.
    unless explicitly requested.
 5. **Don't create empty folders.** Folder structure follows content; introduce a
    directory when its contents justify it (Phase 4 direction).
+6. **Development Workflow** — every new feature follows the fixed 7-step
+   sequence (understand → ownership → modularity → implement → test → document →
+   report), and major restructuring stops and is reported before proceeding.
+   Details: [decisions/adr-006-development-workflow.md](decisions/adr-006-development-workflow.md)
+   + [development/workflow.md](development/workflow.md).
+7. **No giant files** — do not let files balloon to thousands of lines just
+   because the application grew. Prefer 20 focused modules over 5 giant ones;
+   split a file when it holds many unrelated responsibilities (line count is a
+   smell, not the rule). Details:
+   [decisions/adr-007-no-giant-files.md](decisions/adr-007-no-giant-files.md).
 
 ## What is explicitly NOT here
 

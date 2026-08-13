@@ -15,6 +15,7 @@ lives in exactly one document; other documents link to it rather than repeat it.
 |---|---|
 | Understand what the product is and who uses it | [product.md](product.md) |
 | Understand how the code is organized and the rules for changing it | [architecture.md](architecture.md) |
+| Follow the process for building a new feature | [development/workflow.md](development/workflow.md) |
 | Know why decisions were made | [background.md](background.md) and [decisions/](decisions/README.md) |
 | List the HTTP endpoints the dashboard uses | [api/endpoints.md](api/endpoints.md) |
 | List the MCP tools exposed to AI clients | [mcp/tools.md](mcp/tools.md) |
@@ -44,6 +45,7 @@ docs/
 ├── mcp/tools.md       # MCP tool reference
 ├── frontend/guide.md  # browser frontend
 ├── development/local.md  # local setup and run
+├── development/workflow.md  # feature development workflow
 ├── testing/README.md  # tests and verification
 ├── packaging/nuitka.md   # release .exe build
 └── decisions/         # architecture decision records (ADRs)

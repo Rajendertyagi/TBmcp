@@ -5,9 +5,10 @@ JSON API defined here. Falcon (zero-dependency WSGI framework) routes the reques
 reuses the same ``client`` / ``render`` / ``config`` modules the AI server uses, so the
 human view and the AI view never disagree.
 
-Routes are split across two files:
+Routes are split by responsibility:
 - ``api/app.py`` - WSGI app assembly (this file): helpers, index page, create_app/build_app.
-- ``api/routes`` - one Resource class per HTTP endpoint.
+- ``api/routes`` - a package of Falcon Resource classes, one per HTTP endpoint,
+  split into focused modules (``market``, ``fundamentals``, ``auth``, ``tools``).
 
 Run it with ``python main.py ui`` (which calls :func:`build_app`).
 """

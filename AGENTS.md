@@ -27,7 +27,22 @@ Full product description: [`docs/product.md`](docs/product.md).
 
 ---
 
-## 2. Repository structure
+## 2. Development workflow
+
+**Every new feature follows a fixed 7-step sequence** — understand → identify
+ownership → decide modularity → implement → test → document → report. Step 1
+means inspect before coding; Step 3 has a hard stop: if a feature needs major
+restructuring, **STOP and report it before proceeding**. Step 7 closes with a
+fixed report shape (files created/modified/removed, tests, architecture impact,
+docs, remaining issues).
+
+Full step-by-step reference (with repo-specific pointers):
+[`docs/development/workflow.md`](docs/development/workflow.md).
+Convention: [ADR-006](docs/decisions/adr-006-development-workflow.md).
+
+---
+
+## 3. Repository structure
 
 ```
 TBMCP/                       # git repo root = the app
@@ -39,7 +54,13 @@ TBMCP/                       # git repo root = the app
 ├── providers/               # DataProvider abstraction (swap brokers here)
 │   ├── __init__.py          #   create_provider() factory
 │   ├── base.py              #   30-method DataProvider protocol
-│   └── upstox.py            #   UpstoxClient: the Upstox v2/v3 REST adapter
+│   └── upstox.py            #   UpstoxClient: the Upstox v2/v3 REST adapter —
+│       ├── upstox_parsing.py      #     split into focused mixins by domain:
+│       ├── upstox_connect.py      #     raw-response parsing + debug dumps
+│       ├── upstox_resolution.py   #     auth + token lifecycle + rate-limited transport
+│       ├── upstox_market_data.py  #     symbol → instrument-key / lot-size resolution
+│       └── upstox_fundamentals.py #     chains, quotes, futures, depth, margin, market info
+│                                #     fundamentals / news / option Greeks
 ├── analytics/               # derived F&O analytics — pure functions over models
 ├── mcp/                     # AI-facing MCP server (server.py + tool modules)
 │   ├── market_data.py       #   19 raw market-data tools (get_*)
@@ -48,7 +69,12 @@ TBMCP/                       # git repo root = the app
 ├── api/                     # human-facing Falcon web dashboard
 │   ├── app.py               #   WSGI assembly + helpers
 │   ├── render.py            #   pure HTML rendering for the chain table
-│   └── routes/              #   one Resource class per HTTP endpoint
+│   └── routes/              #   one Resource class per HTTP endpoint, split by
+│       ├── market.py        #     responsibility (re-exported via __init__.py):
+│       ├── fundamentals.py  #     market data (ticker/quote/chain/expiries/history/vix)
+│       ├── auth.py          #     fundamentals / news / option Greeks
+│       ├── tools.py         #     settings + OAuth login flow
+│       └── __init__.py      #     "test all" batch (Tools page)
 ├── services/
 │   └── tools_runner.py      # runs every tool once ("Test All" batch)
 ├── frontend/                # static HTML/JS single-page app
@@ -60,7 +86,7 @@ TBMCP/                       # git repo root = the app
 
 ---
 
-## 3. Where the actual application lives
+## 4. Where the actual application lives
 
 The application is at the **repository root**. `main.py`, `config.py`,
 `constants.py`, `models.py`, and the `providers/`, `analytics/`, `mcp/`,
@@ -72,7 +98,7 @@ file. Dependencies: `falcon`, `waitress`, `requests`.
 
 ---
 
-## 4. Where ZeroMCP lives
+## 5. Where ZeroMCP lives
 
 The AI server runs on a **forked ZeroMCP engine** — a zero-dependency MCP server
 framework we control. It lives self-contained at [`zeromcp/`](zeromcp/):
@@ -94,11 +120,11 @@ framework we control. It lives self-contained at [`zeromcp/`](zeromcp/):
 - The importable package is `zeromcp` (under `zeromcp/src/`).
 
 Do not edit `zeromcp/` casually — treat it as an upstream fork you sync, not app
-code. (See §16.)
+code. (See §17.)
 
 ---
 
-## 5. How to run the application
+## 6. How to run the application
 
 Requires **Python >= 3.11** and **uv**. Full setup: [`docs/development/local.md`](docs/development/local.md).
 
@@ -123,7 +149,7 @@ server's stdout JSON-RPC stream. `--reload` is accepted but ignored by Falcon.
 
 ---
 
-## 6. Frontend architecture
+## 7. Frontend architecture
 
 The dashboard is a **vanilla JavaScript SPA** — no React/Vue/Angular, no build
 step. It is served as static files by Falcon.
@@ -157,7 +183,7 @@ Guide: [`docs/frontend/guide.md`](docs/frontend/guide.md).
 
 ---
 
-## 7. Backend architecture
+## 8. Backend architecture
 
 Layers (top to bottom):
 
@@ -190,7 +216,7 @@ Architecture: [`docs/architecture.md`](docs/architecture.md).
 
 ---
 
-## 8. MCP architecture
+## 9. MCP architecture
 
 The MCP server is **modular by tool category** with exactly **one shared
 `McpServer`** instance:
@@ -219,11 +245,14 @@ All 42 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
 
 ---
 
-## 9. Provider architecture
+## 10. Provider architecture
 
 - `providers/base.py` defines the **`DataProvider` protocol** (30 methods) —
   the contract every data source must implement.
-- `providers/upstox.py` is the **`UpstoxClient`** adapter (the only provider).
+- `providers/upstox.py` is the **`UpstoxClient`** adapter (the only provider),
+  assembled from focused mixins by domain (`upstox_connect`, `upstox_resolution`,
+  `upstox_market_data`, `upstox_fundamentals`) plus shared `upstox_parsing`
+  helpers — the public surface (`UpstoxClient`, all protocol methods) is unchanged.
 - `providers/__init__.py` exports `create_provider(settings)` — the **single
   switch point**, driven by `TBMCP_PROVIDER` (default `upstox`).
 
@@ -232,7 +261,7 @@ the broker directly from tools, routes, or pages.
 
 ---
 
-## 10. Naming conventions
+## 11. Naming conventions
 
 **File Responsibility Rule** — every important file has a clear reason to
 change; name files for their responsibility, not their position.
@@ -255,22 +284,26 @@ ADR: [`docs/decisions/adr-004-file-responsibility.md`](docs/decisions/adr-004-fi
 
 ---
 
-## 11. Modularization rules
+## 12. Modularization rules
 
 - **Never use an existing file as a dumping ground.** Before adding code, ask
   which responsibility it belongs to, whether that module exists, whether it is
   already too large, and whether it should be its own module. If it's a separate
   responsibility, **create a new module**.
-- **MCP Modularization** (see §8): one module per tool category, one shared
+- **No giant files** — prefer 20 focused modules over 5 giant modules. Split a
+  file when it holds many unrelated responsibilities; line count alone is not
+  the deciding factor (ADR-007).
+- **MCP Modularization** (see §9): one module per tool category, one shared
   `McpServer`, stable tool names.
 - **Don't create empty folders** — folder structure follows content.
 
 ADRs: [`docs/decisions/adr-004`](docs/decisions/adr-004-file-responsibility.md),
-[`adr-005`](docs/decisions/adr-005-mcp-modularization.md).
+[`adr-005`](docs/decisions/adr-005-mcp-modularization.md),
+[`adr-007`](docs/decisions/adr-007-no-giant-files.md).
 
 ---
 
-## 12. Testing rules
+## 13. Testing rules
 
 See [`docs/testing/README.md`](docs/testing/README.md).
 
@@ -301,7 +334,7 @@ Rules:
 
 ---
 
-## 13. Packaging rules
+## 14. Packaging rules
 
 See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 
@@ -319,7 +352,7 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 
 ---
 
-## 14. Security rules
+## 15. Security rules
 
 - **Never commit credentials.** `.env` and `.upstox-token.json` are gitignored;
   a single `git add -A` would otherwise commit a working broker token. When
@@ -335,7 +368,7 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 
 ---
 
-## 15. Important architectural decisions
+## 16. Important architectural decisions
 
 Recorded as ADRs in [`docs/decisions/`](docs/decisions/README.md):
 
@@ -345,14 +378,16 @@ Recorded as ADRs in [`docs/decisions/`](docs/decisions/README.md):
    NiceGUI/PyWebIO/Flet (chosen for the cleanest Nuitka freeze).
 3. **ADR-003 — DataProvider abstraction** — all broker access behind the
    `providers/base.py` protocol.
-4. **ADR-004 — File Responsibility rule** (§10).
-5. **ADR-005 — MCP Modularization** (§8).
+4. **ADR-004 — File Responsibility rule** (§11).
+5. **ADR-005 — MCP Modularization** (§9).
+6. **ADR-006 — Development Workflow** (§2).
+7. **ADR-007 — No giant files** (§12).
 
 History: [`docs/background.md`](docs/background.md).
 
 ---
 
-## 16. Things AI agents MUST NOT change casually
+## 17. Things AI agents MUST NOT change casually
 
 These are load-bearing. Change only with an explicit, deliberate decision:
 
@@ -383,6 +418,7 @@ These are load-bearing. Change only with an explicit, deliberate decision:
 |---|---|
 | Product | [`docs/product.md`](docs/product.md) |
 | Architecture & rules | [`docs/architecture.md`](docs/architecture.md) |
+| Feature workflow | [`docs/development/workflow.md`](docs/development/workflow.md) |
 | HTTP endpoints | [`docs/api/endpoints.md`](docs/api/endpoints.md) |
 | MCP tools (42) | [`docs/mcp/tools.md`](docs/mcp/tools.md) |
 | Frontend | [`docs/frontend/guide.md`](docs/frontend/guide.md) |
