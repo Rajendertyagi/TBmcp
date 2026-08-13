@@ -1,6 +1,11 @@
 name: CI
 
-on: [push, pull_request]
+# Automatic checks on every push/PR, PLUS manual trigger from the Actions tab
+# ("Run workflow") so the pipeline can be re-verified on demand without a push.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,14 +29,17 @@ jobs:
       - name: Create venv
         run: uv sync
 
+      # NOTE: every step must go through `uv run` — it resolves the project
+      # venv (Python 3.13 + pytest). A bare `python` on the runner is the
+      # system interpreter (/usr/bin/python) which has no project deps.
       - name: Syntax check (compileall)
         run: |
-          python -m compileall -q \
+          uv run python -m compileall -q \
             -x "(\.venv|__pycache__|frontend)([\\/]|$)" \
             .
 
       - name: CLI help smoke test
-        run: python main.py --help
+        run: uv run python main.py --help
 
       - name: Offline test suite (unit + integration, no broker)
-        run: python -m pytest
+        run: uv run pytest
