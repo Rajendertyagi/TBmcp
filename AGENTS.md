@@ -446,6 +446,60 @@ explicitly authorizes them.
 
 ---
 
+## 20. Reporting to a non-coder owner
+
+The project owner is **not a developer** and is not expected to understand
+implementation details. When reporting work:
+
+- **Explain what changed** and **why it changed** — in plain language, with as
+  little technical jargon as possible.
+- **Identify risks** and **anything requiring a decision**.
+- Do **not** ask the owner to make technical decisions that the established
+  architecture already answers.
+- Do **not** assume approval for architectural changes. If a change would
+  materially alter the architecture, **stop and ask** first.
+
+---
+
+## 21. Final principle — how the project evolves
+
+TBMCP stays **one shared domain with two consumers** — the AI/MCP server and the
+human Web UI — both reading from the same providers, analytics and services:
+
+```
+                     TBMCP
+                       │
+              ┌────────┴────────┐
+              │                 │
+           AI/MCP            Web UI
+              │                 │
+              └────────┬────────┘
+                       │
+                Shared Domain
+                  /    │    \
+                 /     │     \
+          Providers  Analytics Services
+               │
+        External Market Data
+```
+
+The architecture must absorb growth — **more pages, more MCP tools, more
+analytics, more providers, more market data, more tests, more documentation** —
+without repeatedly restructuring the entire project.
+
+Golden rules:
+
+- **Never optimize for fewer files. Optimize for clear responsibilities.**
+  (see §11)
+- Never add code to a large file just because it is convenient (see §12).
+- Never create files just for the appearance of modularity.
+- **Audit first. Design second. Implement third. Test fourth. Document fifth.**
+  (see §2)
+- When in doubt, **preserve the existing architecture** and explain the decision
+  before making a major structural change.
+
+---
+
 ## Quick doc index
 
 | Need | Go to |
