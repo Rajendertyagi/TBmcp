@@ -414,6 +414,38 @@ These are load-bearing. Change only with an explicit, deliberate decision:
 
 ---
 
+## 18. Git rules
+
+Before any significant work:
+
+- Check `git status` first.
+- Do not overwrite uncommitted user work.
+- Do not delete files without understanding their purpose.
+- Never commit secrets (see §15).
+- Never commit generated artifacts (`.venv`, `__pycache__`, `build/`, `dist/`,
+  `debug_*.json`, the Nuitka `*.exe`).
+- Keep changes logically grouped; prefer small, understandable commits.
+
+Never run destructive git commands without explicit approval. In particular,
+`git reset --hard` and `git clean -fd` are forbidden unless the owner
+explicitly authorizes them.
+
+---
+
+## 19. Debugging rules
+
+- Normal operation logs at **INFO** level.
+- `python main.py ui --debug` (and `--debug` on the `mcp` / `both` subcommands)
+  enables **DEBUG**-level diagnostics — never on by default.
+- Do not permanently enable DEBUG logging in the packaged application.
+- Debug artifacts go to **temporary/runtime locations** (e.g. the system temp
+  dir `tbmcp_debug/` used by `providers/upstox_parsing.py`), never into the
+  source tree.
+- Never log credentials, access tokens, refresh tokens, or sensitive user
+  information — at any log level.
+
+---
+
 ## Quick doc index
 
 | Need | Go to |
