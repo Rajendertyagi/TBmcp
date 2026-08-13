@@ -6,7 +6,9 @@ for why the stack was chosen to make this easy).
 
 ## Build command
 
-Run **only in CI / release**, never locally during development:
+Run **manually** at release time, on a Windows machine (the output is a
+`.exe`). It is **never built automatically in CI** and never during
+development:
 
 ```bash
 python -m nuitka --onefile \
@@ -34,6 +36,9 @@ python -m nuitka --onefile \
 
 ## Notes
 
+- CI (`.github/workflows/ci.yml`) only **validates** — syntax check, CLI smoke
+  test, offline pytest — it never produces the `.exe`. Building is a deliberate
+  manual step you run yourself at release time.
 - `main.py` calls `multiprocessing.freeze_support()` so the `both` mode (which
   spawns the UI process) works inside a frozen binary.
 - Keep the include flags in sync with `pyproject.toml`'s dependency list when

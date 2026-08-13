@@ -301,7 +301,9 @@ Rules:
 
 See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 
-- Release-only **Nuitka onefile** build (never locally during development):
+- **Manual, release-only Nuitka onefile build** — you run it by hand on a
+  Windows machine; CI never builds automatically (it only validates: syntax
+  check, CLI smoke, offline tests):
   `python -m nuitka --onefile --include-package=zeromcp --include-data-dir=frontend=frontend --include-package=falcon,waitress,requests main.py`
 - Produces a standalone `rtmcp.exe`; config/token live next to the exe
   (portable folder).

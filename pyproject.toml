@@ -34,8 +34,9 @@ markers = [
 ]
 addopts = "-q"
 
-# Nuitka (release-only, run in CI — never locally): produces a standalone TBMcp.exe
-# with config/token/log living next to the exe (portable single folder).
+# Nuitka (MANUAL release build - never automatic in CI, never during development):
+# produces a standalone TBMcp.exe with config/token/log living next to the exe
+# (portable single folder). CI only validates - it never builds the .exe.
 #   python -m nuitka --onefile \
 #       --include-package=zeromcp \
 #       --include-data-dir=frontend=frontend \
