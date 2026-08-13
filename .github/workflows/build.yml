@@ -22,6 +22,9 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           version: "0.9.3"
+          # Pin Python 3.12: Nuitka's MinGW64 does NOT work on Python 3.13+
+          # (official Nuitka manual), and uv prefers the newest Python.
+          python-version: "3.12"
 
       - name: Create venv
         run: uv sync
