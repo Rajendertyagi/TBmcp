@@ -124,9 +124,9 @@ def build_app(host: str = DEFAULT_UI_HOST, port: int = DEFAULT_UI_PORT, reload: 
 
     app = create_app()
     url = f"http://{host}:{port}"
-    print(f"[RTMCP] Dashboard running at {url}  (Ctrl+C to stop)")
+    print(f"[TBMCP] Dashboard running at {url}  (Ctrl+C to stop)")
     if reload:
-        print("[RTMCP] Note: --reload is ignored by the Falcon server; restart the process to pick up changes.")
+        print("[TBMCP] Note: --reload is ignored by the Falcon server; restart the process to pick up changes.")
     # Bump the thread pool above Waitress's default of 4: the SPA loads many small
     # ES-module files in parallel on each page load, which would otherwise queue.
     waitress.serve(app, host=host, port=port, threads=16)

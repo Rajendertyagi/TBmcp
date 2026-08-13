@@ -27,7 +27,7 @@ frontend/
 
 `index.html` is the only HTML file. It contains the top bar (home icon, live
 ticker, nav tabs, "Option Chain" / "Charts" links, settings gear) and an empty
-`<main class="rtmcp-content">` where pages are mounted. It loads the chart
+`<main class="tbmcp-content">` where pages are mounted. It loads the chart
 library as a classic script **before** the ES-module entry point
 (`<script type="module" src="/static/js/app.js">`).
 

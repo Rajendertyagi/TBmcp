@@ -59,7 +59,7 @@ class TestToolInventory:
         assert sorted(f.__name__ for f in options.TOOLS) == sorted(EXPECTED_OPTIONS_TOOLS)
 
     def test_registered_server_methods_are_the_35_contract(self, monkeypatch):
-        monkeypatch.delenv("RTMCP_PROVIDER", raising=False)
+        monkeypatch.delenv("TBMCP_PROVIDER", raising=False)
         import mcp.server as server
 
         names = sorted(server.mcp.tools.methods)
@@ -67,7 +67,7 @@ class TestToolInventory:
         assert len(names) == 35
 
     def test_registered_name_is_the_function_name(self, monkeypatch):
-        monkeypatch.delenv("RTMCP_PROVIDER", raising=False)
+        monkeypatch.delenv("TBMCP_PROVIDER", raising=False)
         import mcp.server as server
 
         for fn in market_data.TOOLS + options.TOOLS:

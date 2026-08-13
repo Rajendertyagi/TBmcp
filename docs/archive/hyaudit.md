@@ -15,7 +15,7 @@ It is **two projects in one tree**, which is the root cause of most of the confu
 | Path | What it is | Package / version |
 |------|------------|-------------------|
 | `zeromcp/` | Vendored fork of `mrexodia/zeromcp` — the zero-dependency MCP engine (self-contained project at the repo root) | package `zeromcp` v0.0.0 |
-| repo root (`TBMCP/`) | The actual application: an Upstox-backed market-data **MCP server** (`mcp/server.py`, ~35 tools) **plus** a **Falcon + vanilla-JS dashboard** (`api/app.py` + `frontend/`) | `rtmcp` v0.1.0 |
+| repo root (`TBMCP/`) | The actual application: an Upstox-backed market-data **MCP server** (`mcp/server.py`, ~35 tools) **plus** a **Falcon + vanilla-JS dashboard** (`api/app.py` + `frontend/`) | `tbmcp` v0.1.0 |
 
 The engine's `README.md` (inside `zeromcp/`) documents only `zeromcp`. All recent commits land in the app at the repo root.
 There are two `pyproject.toml` files and two `uv.lock` files (one per project).
@@ -63,11 +63,11 @@ only test (`tests/tool_test.py`) is a manual CLI harness, not run by CI.
 `PLAN_REPLACE_NICEGUI.md`, `PLAN_DUAL_SERVER.md`, `PLAN_SYMMETRICAL_CHAIN.md`,
 `PLAN_FRAMEWORK_COMPARISON.md` describe a *NiceGUI → Flask* migration, but the code
 already moved to **Falcon + vanilla JS**. They reference files that don't exist
-(`ui.py`, `charts.py`, `rtmcp.css`). Misleading — remove or archive.
+(`ui.py`, `charts.py`, `tbmcp.css`). Misleading — remove or archive.
 
 **M2. Stale `docs/`.**
 `docs/overview.md` says the MCP server "exposes 3 tools" (it exposes ~30), references
-`charts.py` / `rtmcp.css` (real files are `frontend/style.css`, no `charts.py`), and
+`charts.py` / `tbmcp.css` (real files are `frontend/style.css`, no `charts.py`), and
 says "Python 3.10+" while `pyproject.toml` requires `>=3.11`. `docs/README.md` mentions
 NiceGUI then corrects to Falcon. Root `README.md` is `zeromcp`-only.
 
@@ -96,7 +96,7 @@ token/key match.
 **L3. `json_load` defined at the bottom of `client.py`** and re-imports `json` — works at
 runtime but is stylistically odd.
 
-**L4. Naming/maintenance clarity.** `TBmcp` / `zeromcp` / `rtmcp` plus dual
+**L4. Naming/maintenance clarity.** `TBmcp` / `zeromcp` / `tbmcp` plus dual
 `pyproject.toml` + `uv.lock` is confusing for a newcomer and makes the fork's
 sync-with-upstream status unclear.
 
@@ -123,5 +123,5 @@ sync-with-upstream status unclear.
 
 - **Goal of the audit:** clean up / get CI green / secure the repo, or assess architecture
   soundness before building more features? Changes what gets prioritized.
-- **Deleted test files:** intentional (you only care about `rtmcp`, drop the `zeromcp`
+- **Deleted test files:** intentional (you only care about `tbmcp`, drop the `zeromcp`
   library tests) or an accident? Determines whether step 2 restores or removes them from CI.

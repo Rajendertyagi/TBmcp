@@ -4,17 +4,17 @@ import { INTERVALS, MAJOR_INDICES } from "../utils/config.js";
 
 export function statCard(label, id) {
   return (
-    '<div class="rtmcp-stat-card">' +
-    '<div class="rtmcp-stat-label">' + label + "</div>" +
-    '<div class="rtmcp-stat-value" id="' + id + '">---</div></div>'
+    '<div class="tbmcp-stat-card">' +
+    '<div class="tbmcp-stat-label">' + label + "</div>" +
+    '<div class="tbmcp-stat-value" id="' + id + '">---</div></div>'
   );
 }
 
 export function statChip(label, id) {
   return (
-    '<div class="rtmcp-stat-chip">' +
-    '<span class="rtmcp-stat-chip-label">' + label + "</span>" +
-    '<span class="rtmcp-stat-chip-value" id="' + id + '">---</span></div>'
+    '<div class="tbmcp-stat-chip">' +
+    '<span class="tbmcp-stat-chip-label">' + label + "</span>" +
+    '<span class="tbmcp-stat-chip-value" id="' + id + '">---</span></div>'
   );
 }
 

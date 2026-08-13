@@ -10,13 +10,13 @@ import { LWC_CHART_HEIGHT, VIX_HISTORY_DAYS, TICKER_REFRESH_MS } from "../utils/
 export function createVixPage() {
   function mount(container) {
     container.innerHTML =
-      '<div class="rtmcp-vix-hero">' +
-      '<span class="rtmcp-vix-title">India VIX</span>' +
-      '<span class="rtmcp-vix-value" id="vix-value">---</span>' +
-      '<span class="rtmcp-vix-change" id="vix-change"></span>' +
+      '<div class="tbmcp-vix-hero">' +
+      '<span class="tbmcp-vix-title">India VIX</span>' +
+      '<span class="tbmcp-vix-value" id="vix-value">---</span>' +
+      '<span class="tbmcp-vix-change" id="vix-change"></span>' +
       "</div>" +
       '<div class="flex items-center gap-4" style="margin:12px 0;flex-wrap:wrap;">' +
-      '<select id="vixint" class="rtmcp-select">' + intervalOptions("day") + "</select>" +
+      '<select id="vixint" class="tbmcp-select">' + intervalOptions("day") + "</select>" +
       '<button id="vixchartbtn">Update Chart</button>' +
       "</div>" +
       '<div id="vixchart" style="width:100%;height:' + (LWC_CHART_HEIGHT + 40) + 'px;"></div>';

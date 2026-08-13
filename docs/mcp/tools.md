@@ -67,7 +67,7 @@ Each prices a multi-leg options strategy from a fetched chain.
 
 ```python
 # mcp/server.py (assembly only)
-mcp = McpServer("rtmcp", instructions=(...))
+mcp = McpServer("tbmcp", instructions=(...))
 for _fn in market_data.TOOLS + options.TOOLS:
     mcp.tool()(_fn)
 ```

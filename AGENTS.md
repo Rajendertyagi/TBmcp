@@ -12,7 +12,7 @@
 
 ## 1. What TBMCP is
 
-**TBMCP** (Python package name `rtmcp`) is a personal Indian stock-market
+**TBMCP** (Python package name `tbmcp`) is a personal Indian stock-market
 application with **two consumers** that share one data layer:
 
 1. **An AI assistant** — talks to an **MCP server** exposing **35 tools**
@@ -52,7 +52,7 @@ TBMCP/                       # git repo root = the app
 ├── tests/                   # test harness
 ├── zeromcp/                 # the forked ZeroMCP engine (self-contained project)
 ├── docs/                    # detailed documentation
-└── pyproject.toml           # app package metadata (name="rtmcp")
+└── pyproject.toml           # app package metadata (name="tbmcp")
 ```
 
 ---
@@ -64,7 +64,7 @@ The application is at the **repository root**. `main.py`, `config.py`,
 `api/`, `services/`, `frontend/`, `tests/` packages **are the app**. All recent
 commits land here.
 
-The root `pyproject.toml` (name `rtmcp`, version `0.1.0`) is the app's project
+The root `pyproject.toml` (name `tbmcp`, version `0.1.0`) is the app's project
 file. Dependencies: `falcon`, `waitress`, `requests`.
 
 ---
@@ -221,7 +221,7 @@ All 35 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
   the contract every data source must implement.
 - `providers/upstox.py` is the **`UpstoxClient`** adapter (the only provider).
 - `providers/__init__.py` exports `create_provider(settings)` — the **single
-  switch point**, driven by `RTMCP_PROVIDER` (default `upstox`).
+  switch point**, driven by `TBMCP_PROVIDER` (default `upstox`).
 
 Adding a broker = new module in `providers/` + a factory entry. Do **not** call
 the broker directly from tools, routes, or pages.
@@ -279,7 +279,7 @@ Three suites:
   factory, the **35-tool MCP inventory contract**, every Falcon route (happy +
   error paths), and the `run_all_tools()` batch. Offline, runs in CI.
 - **Live** (`tests/live/`) — opt-in against the real Upstox API, gated by
-  `pytest.mark.live` and `RTMCP_RUN_LIVE=1`. Never runs in CI.
+  `pytest.mark.live` and `TBMCP_RUN_LIVE=1`. Never runs in CI.
 
 Rules:
 
@@ -305,7 +305,7 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
   Windows machine; CI never builds automatically (it only validates: syntax
   check, CLI smoke, offline tests):
   `python -m nuitka --onefile --include-package=zeromcp --include-data-dir=frontend=frontend --include-package=falcon,waitress,requests main.py`
-- Produces a standalone `rtmcp.exe`; config/token live next to the exe
+- Produces a standalone `TBMcp.exe`; config/token live next to the exe
   (portable folder).
 - Keep include flags in sync with `pyproject.toml` dependencies.
 - `main.py` calls `multiprocessing.freeze_support()` for `both` mode under the

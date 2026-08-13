@@ -1,4 +1,4 @@
-"""Data contracts (typed shapes) for RTMCP.
+"""Data contracts (typed shapes) for TBMCP.
 
 These TypedDicts describe the option-chain data returned by the Upstox client.
 Using them gives strong typing end-to-end (no loose `dict`/`Any` in domain code)

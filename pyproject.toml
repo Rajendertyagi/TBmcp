@@ -16,7 +16,7 @@ dependencies = [
 
 # Dev/test tooling — installed with `uv sync --group dev` (CI), never part of
 # the packaged app. pytest drives tests/unit and tests/integration offline;
-# tests/live is gated behind TBMcp_RUN_LIVE=1 and must never run in CI.
+# tests/live is gated behind TBMCP_RUN_LIVE=1 and must never run in CI.
 [dependency-groups]
 dev = [
     "pytest>=8.0",
@@ -24,13 +24,13 @@ dev = [
 
 [tool.pytest.ini_options]
 # Offline suites only. Live-broker tests live in tests/live and are excluded
-# from the default run (they need real credentials + TBMcp_RUN_LIVE=1).
+# from the default run (they need real credentials + TBMCP_RUN_LIVE=1).
 testpaths = [
     "tests/unit",
     "tests/integration",
 ]
 markers = [
-    "live: requires live Upstox credentials; enable with RTMCP_RUN_LIVE=1",
+    "live: requires live Upstox credentials; enable with TBMCP_RUN_LIVE=1",
 ]
 addopts = "-q"
 

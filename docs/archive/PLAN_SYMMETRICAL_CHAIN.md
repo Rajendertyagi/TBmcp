@@ -118,7 +118,7 @@ volume_change_pct = md.get("volume_change_pct") or md.get("changeinVolume") or N
 def _leg_cells(leg: Optional[dict], side: str = "CE") -> str:
     """Generate 14 cells per leg."""
     if not leg:
-        return "<td class='rtmcp-empty'>-</td>" * 14
+        return "<td class='tbmcp-empty'>-</td>" * 14
     
     cells = []
     
@@ -162,14 +162,14 @@ def _leg_cells(leg: Optional[dict], side: str = "CE") -> str:
 #### 4b. Update Header
 ```python
 header = (
-    "<tr class='rtmcp-th'>"
+    "<tr class='tbmcp-th'>"
     # CALLS side (14 cols)
     "<th>Buildup</th><th>Vega</th><th>Theta</th><th>Gamma</th><th>Delta</th>"
     "<th>IV</th><th>Vol%</th><th>Volume</th><th>OI</th><th>LTP%</th><th>LTP</th>"
     "<th>BidQty</th><th>BidPrice</th><th>AskPrice</th><th>AskQty</th>"
     # Center
-    "<th rowspan='2' class='rtmcp-strike'>Strike</th>"
-    "<th rowspan='2' class='rtmcp-pcr'>PCR</th>"
+    "<th rowspan='2' class='tbmcp-strike'>Strike</th>"
+    "<th rowspan='2' class='tbmcp-pcr'>PCR</th>"
     # PUTS side (14 cols) - mirrored order
     "<th>AskQty</th><th>AskPrice</th><th>BidPrice</th><th>BidQty</th>"
     "<th>LTP</th><th>LTP%</th><th>OI</th><th>Volume</th><th>Vol%</th>"
@@ -194,8 +194,8 @@ for row in rows:
     rows_html.append(
         "<tr>"
         + _leg_cells(ce, "CE")
-        + f"<td class='rtmcp-strike'>{_fmt(strike, 0)}</td>"
-        + f"<td class='rtmcp-pcr'>{_fmt(pcr, 2)}</td>"
+        + f"<td class='tbmcp-strike'>{_fmt(strike, 0)}</td>"
+        + f"<td class='tbmcp-pcr'>{_fmt(pcr, 2)}</td>"
         + _leg_cells(pe, "PE")
         + "</tr>"
     )
@@ -205,7 +205,7 @@ for row in rows:
 
 ### Phase 5: Update CSS (30 min)
 
-**File:** `rtmcp.css`
+**File:** `tbmcp.css`
 
 Add/modify styles for:
 - 28-column table layout
@@ -215,32 +215,32 @@ Add/modify styles for:
 
 ```css
 /* New column widths for Greek values */
-.rtmcp-table th:nth-child(2),
-.rtmcp-table th:nth-child(3),
-.rtmcp-table th:nth-child(4),
-.rtmcp-table th:nth-child(5),
-.rtmcp-table th:nth-child(10),
-.rtmcp-table th:nth-child(11),
-.rtmcp-table th:nth-child(12),
-.rtmcp-table th:nth-child(13) {
+.tbmcp-table th:nth-child(2),
+.tbmcp-table th:nth-child(3),
+.tbmcp-table th:nth-child(4),
+.tbmcp-table th:nth-child(5),
+.tbmcp-table th:nth-child(10),
+.tbmcp-table th:nth-child(11),
+.tbmcp-table th:nth-child(12),
+.tbmcp-table th:nth-child(13) {
   width: 70px;
 }
 
 /* PCR column */
-.rtmcp-pcr {
+.tbmcp-pcr {
   background: var(--bg-secondary);
   font-weight: 600;
 }
 
 /* Bid/Ask columns */
-.rtmcp-table td:nth-child(12),
-.rtmcp-table td:nth-child(13),
-.rtmcp-table td:nth-child(14),
-.rtmcp-table td:nth-child(15),
-.rtmcp-table td:nth-child(29),
-.rtmcp-table td:nth-child(30),
-.rtmcp-table td:nth-child(31),
-.rtmcp-table td:nth-child(32) {
+.tbmcp-table td:nth-child(12),
+.tbmcp-table td:nth-child(13),
+.tbmcp-table td:nth-child(14),
+.tbmcp-table td:nth-child(15),
+.tbmcp-table td:nth-child(29),
+.tbmcp-table td:nth-child(30),
+.tbmcp-table td:nth-child(31),
+.tbmcp-table td:nth-child(32) {
   width: 80px;
   font-size: 12px;
 }
@@ -264,7 +264,7 @@ If needed, update the frontend to handle the new column structure.
 | `client.py` | Extract volume change field | 15 min |
 | `models.py` | Add `volumeChangePct` field | 5 min |
 | `render.py` | Rewrite `_leg_cells()` + header | 2 hours |
-| `rtmcp.css` | Update column widths | 30 min |
+| `tbmcp.css` | Update column widths | 30 min |
 | `app.js` | Minor updates (if needed) | 1 hour |
 | **Total** | | **~4 hours** |
 

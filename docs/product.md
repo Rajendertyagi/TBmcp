@@ -1,6 +1,6 @@
 # What is TBMCP?
 
-**TBMCP** (package name `rtmcp`) is a Python project that puts Indian market
+**TBMCP** (package name `tbmcp`) is a Python project that puts Indian market
 data (NIFTY, BANKNIFTY, FINNIFTY, SENSEX, India VIX options and futures, etc.)
 in front of two kinds of users:
 

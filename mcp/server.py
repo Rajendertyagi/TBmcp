@@ -33,9 +33,9 @@ market_data._client = client
 options._client = client
 
 mcp = McpServer(
-    "rtmcp",
+    "tbmcp",
     instructions=(
-        "RTMCP provides Indian equity/options/futures market data, fundamentals, and F&O "
+        "TBMCP provides Indian equity/options/futures market data, fundamentals, and F&O "
         "analytics via the Upstox broker API. Raw data tools: get_option_chain, get_expiry_dates, "
         "get_spot_price, get_full_quote(s), get_historical_data, get_futures_chain, "
         "get_market_depth, get_margin, get_pcr, get_max_pain, get_oi, get_change_oi, get_fii, "

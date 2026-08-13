@@ -21,13 +21,13 @@ PROTOCOL_METHODS = [
 class TestCreateProvider:
     def test_default_provider_is_upstox(self, monkeypatch):
         for var in ("UPSTOX_API_KEY", "UPSTOX_API_SECRET", "UPSTOX_ACCESS_TOKEN",
-                    "UPSTOX_REDIRECT_URI", "RTMCP_PROVIDER"):
+                    "UPSTOX_REDIRECT_URI", "TBMCP_PROVIDER"):
             monkeypatch.delenv(var, raising=False)
         client = create_provider(Settings())
         assert isinstance(client, UpstoxClient)
 
     def test_unknown_provider_raises(self, monkeypatch):
-        monkeypatch.setenv("RTMCP_PROVIDER", "bogus-broker")
+        monkeypatch.setenv("TBMCP_PROVIDER", "bogus-broker")
         try:
             create_provider(Settings())
         except ValueError as exc:

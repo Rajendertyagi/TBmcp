@@ -1,4 +1,4 @@
-"""RTMCP entry point.
+"""TBMCP entry point.
 
 Usage:
   python main.py                     # Runs BOTH simultaneously (Default Mode)
@@ -51,7 +51,7 @@ def run_ui(host: str, port: int, reload: bool = False, debug: bool = False) -> N
 
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(
-        prog="rtmcp",
+        prog="tbmcp",
         description="Trading-data MCP server + web UI (Upstox-backed).",
     )
     sub = parser.add_subparsers(dest="command")

@@ -1,7 +1,7 @@
 # Plan: Replace NiceGUI with Flask + Vanilla JS
 
 ## Objective
-Replace NiceGUI (20.3 MB) with Flask (103 KB) + vanilla JavaScript for the RTMCP trading dashboard. Keep all existing business logic, rendering, and CSS intact.
+Replace NiceGUI (20.3 MB) with Flask (103 KB) + vanilla JavaScript for the TBMCP trading dashboard. Keep all existing business logic, rendering, and CSS intact.
 
 ## Current NiceGUI Usage Analysis
 
@@ -26,7 +26,7 @@ Replace NiceGUI (20.3 MB) with Flask (103 KB) + vanilla JavaScript for the RTMCP
 ## Proposed Architecture
 
 ```
-rtmcp-py/
+tbmcp-py/
 ├── main.py              # UNCHANGED (arg parsing, entry point)
 ├── server.py            # NEW: Flask app with all routes
 ├── templates/
@@ -42,7 +42,7 @@ rtmcp-py/
 ├── config.py            # UNCHANGED
 ├── buildup.py           # UNCHANGED
 ├── models.py            # UNCHANGED
-├── rtmcp.css            # UNCHANGED (keep existing 1493 lines)
+├── tbmcp.css            # UNCHANGED (keep existing 1493 lines)
 └── pyproject.toml       # Update: remove nicegui, add flask
 ```
 
@@ -76,30 +76,30 @@ Structure:
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RTMCP - Market Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/rtmcp.css') }}">
-    <!-- Include rtmcp.css directly or inline it -->
+    <title>TBMCP - Market Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tbmcp.css') }}">
+    <!-- Include tbmcp.css directly or inline it -->
 </head>
 <body>
     <!-- Top Bar -->
-    <div class="rtmcp-topbar">
-        <div class="rtmcp-ticker">...</div>
-        <nav class="rtmcp-tabs">...</nav>
+    <div class="tbmcp-topbar">
+        <div class="tbmcp-ticker">...</div>
+        <nav class="tbmcp-tabs">...</nav>
     </div>
     
     <!-- Tab Panels -->
     <div id="tab-content">
         <!-- NIFTY Page -->
-        <div id="page-nifty" class="rtmcp-page">...</div>
+        <div id="page-nifty" class="tbmcp-page">...</div>
         
         <!-- BANKNIFTY Page -->
-        <div id="page-banknifty" class="rtmcp-page">...</div>
+        <div id="page-banknifty" class="tbmcp-page">...</div>
         
         <!-- INDIA VIX Page -->
-        <div id="page-vix" class="rtmcp-page">...</div>
+        <div id="page-vix" class="tbmcp-page">...</div>
         
         <!-- Upstox Setup Page -->
-        <div id="page-upstox" class="rtmcp-page">...</div>
+        <div id="page-upstox" class="tbmcp-page">...</div>
     </div>
     
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
@@ -135,7 +135,7 @@ function renderChart(chartId, candles) {
 
 // Tab switching
 function switchTab(tabName) {
-    document.querySelectorAll('.rtmcp-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tbmcp-page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-${tabName.toLowerCase()}`).classList.add('active');
 }
 ```
@@ -172,7 +172,7 @@ def run_ui(host: str, port: int, reload: bool = False) -> None:
 - Alternative: Create `/api/chart-js` endpoint that returns JS string
 
 ### CSS Compatibility
-- **rtmcp.css stays unchanged** - all class names remain valid
+- **tbmcp.css stays unchanged** - all class names remain valid
 - Only need to ensure HTML structure matches CSS selectors
 - May need minor adjustments for tab/panel structure
 
@@ -210,7 +210,7 @@ def run_ui(host: str, port: int, reload: bool = False) -> None:
 
 | Risk | Likelihood | Mitigation |
 |------|------------|------------|
-| CSS class conflicts | Low | Keep rtmcp.css unchanged |
+| CSS class conflicts | Low | Keep tbmcp.css unchanged |
 | Timer precision issues | Low | Use requestAnimationFrame for smooth updates |
 | CORS issues | Low | Same-origin Flask server |
 | Nuitka compatibility | Medium | Test early, use standard Flask patterns |

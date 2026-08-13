@@ -16,7 +16,7 @@ export function renderError(container, msg) {
   var nice = cleanError(msg);
   if (container) {
     container.innerHTML =
-      '<div class="rtmcp-empty-state"><div class="icon">&#128202;</div>' +
+      '<div class="tbmcp-empty-state"><div class="icon">&#128202;</div>' +
       "<h3>No data</h3><p>" + escapeHtml(nice) + "</p></div>";
   }
   return nice;

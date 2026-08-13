@@ -51,7 +51,7 @@ registerRoute("tools", "Tools", function () {
 }, { showTab: true });
 
 function init() {
-  var container = document.querySelector(".rtmcp-content");
+  var container = document.querySelector(".tbmcp-content");
   var tabs = document.getElementById("navTabs");
   if (!container || !tabs) return;
 

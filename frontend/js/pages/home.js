@@ -20,25 +20,25 @@ export function createHomePage() {
     var cards = links.map(function (r) {
       var desc = DESCRIPTIONS[r.key] || "Open module.";
       return (
-        '<button class="rtmcp-home-card" data-page="' + r.key + '">' +
-        '<span class="rtmcp-home-card-title">' + r.label + "</span>" +
-        '<span class="rtmcp-home-card-desc">' + desc + "</span>" +
-        '<span class="rtmcp-home-card-go">Open &rarr;</span>' +
+        '<button class="tbmcp-home-card" data-page="' + r.key + '">' +
+        '<span class="tbmcp-home-card-title">' + r.label + "</span>" +
+        '<span class="tbmcp-home-card-desc">' + desc + "</span>" +
+        '<span class="tbmcp-home-card-go">Open &rarr;</span>' +
         "</button>"
       );
     }).join("");
     return (
-      '<div class="rtmcp-home">' +
-      '<h1 class="rtmcp-home-title">Option Chain</h1>' +
-      '<p class="rtmcp-home-sub">Pick an index to view its option chain.</p>' +
-      '<div class="rtmcp-home-grid">' + cards + "</div>" +
+      '<div class="tbmcp-home">' +
+      '<h1 class="tbmcp-home-title">Option Chain</h1>' +
+      '<p class="tbmcp-home-sub">Pick an index to view its option chain.</p>' +
+      '<div class="tbmcp-home-grid">' + cards + "</div>" +
       "</div>"
     );
   }
 
   function mount(container) {
     container.innerHTML = homeHTML();
-    container.querySelectorAll(".rtmcp-home-card").forEach(function (btn) {
+    container.querySelectorAll(".tbmcp-home-card").forEach(function (btn) {
       btn.addEventListener("click", function () {
         navigate(btn.dataset.page);
       });

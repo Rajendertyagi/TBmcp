@@ -22,7 +22,7 @@ def portable_env(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     # Deterministic: clear any real Upstox env vars from the environment.
     for var in ("UPSTOX_API_KEY", "UPSTOX_API_SECRET", "UPSTOX_REDIRECT_URI",
-                "UPSTOX_ACCESS_TOKEN", "RTMCP_PROVIDER", "UPSTOX_RATE_LIMIT_GAP_MS"):
+                "UPSTOX_ACCESS_TOKEN", "TBMCP_PROVIDER", "UPSTOX_RATE_LIMIT_GAP_MS"):
         monkeypatch.delenv(var, raising=False)
     return env_path
 
@@ -72,7 +72,7 @@ class TestSettings:
         assert s.rate_limit_gap_ms == 250
 
     def test_provider_and_rate_override_via_env(self, portable_env, monkeypatch):
-        monkeypatch.setenv("RTMCP_PROVIDER", "other")
+        monkeypatch.setenv("TBMCP_PROVIDER", "other")
         monkeypatch.setenv("UPSTOX_RATE_LIMIT_GAP_MS", "999")
         s = config_mod.load_settings()
         assert s.provider == "other"

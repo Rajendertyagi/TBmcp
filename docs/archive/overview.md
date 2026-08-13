@@ -47,7 +47,7 @@ TBMCP/                       # git repo root = the app
 ├── frontend/                # static HTML/JS dashboard (lightweight-charts)
 ├── tests/                   # tests
 ├── docs/                    # project docs (incl. PLAN_*.md)
-└── pyproject.toml           # app package metadata (name="rtmcp")
+└── pyproject.toml           # app package metadata (name="tbmcp")
 ```
 
 See [architecture.md](../architecture.md) for how these pieces fit together and how to run them.

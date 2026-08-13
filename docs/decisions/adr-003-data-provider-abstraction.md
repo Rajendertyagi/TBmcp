@@ -15,7 +15,7 @@ change.
 All broker access goes through a **`DataProvider` protocol** (`providers/base.py`,
 21 methods). The concrete adapter is `providers/upstox.py` (`UpstoxClient`),
 chosen by the `create_provider()` factory in `providers/__init__.py` based on
-`RTMCP_PROVIDER` (default `upstox`). A new broker implements the protocol and is
+`TBMCP_PROVIDER` (default `upstox`). A new broker implements the protocol and is
 selected via the same factory — nothing else changes.
 
 ## Alternatives considered

@@ -1,8 +1,8 @@
-"""Upstox v2 data client (PRIMARY broker backend) — rtmcp.
+"""Upstox v2 data client (PRIMARY broker backend) — tbmcp.
 
 Broker-backed market data only: option chain, expiries, spot price. All fixed
 values come from `constants`; the buildup logic lives in `analytics`; the output
-shape is defined in `models`. Unit conventions mirror the TypeScript RTMCP version:
+shape is defined in `models`. Unit conventions mirror the TypeScript TBMCP version:
 Upstox returns option `volume` in shares but `oi` in contracts, so volume is divided
 by the lot size to match NSE's "Volume (Contracts)" column.
 

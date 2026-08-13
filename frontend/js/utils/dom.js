@@ -21,7 +21,7 @@ export function setStatusById(id, msg, kind) {
   var s = el(id);
   if (!s) return;
   s.textContent = msg || "";
-  s.className = "rtmcp-status " + (kind || "");
+  s.className = "tbmcp-status " + (kind || "");
 }
 
 // Inject the data-driven option-chain colours exactly once for the whole app.
@@ -29,7 +29,7 @@ var chainCssInjected = false;
 export function injectChainCss(css) {
   if (chainCssInjected) return;
   var st = document.createElement("style");
-  st.id = "rtmcp-chain-css";
+  st.id = "tbmcp-chain-css";
   st.textContent = css;
   document.head.appendChild(st);
   chainCssInjected = true;

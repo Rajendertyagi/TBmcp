@@ -13,7 +13,7 @@ from .upstox import UpstoxClient
 
 
 def create_provider(settings: Settings) -> DataProvider:
-    """Return the active data provider selected by the RTMCP_PROVIDER setting.
+    """Return the active data provider selected by the TBMCP_PROVIDER setting.
 
     This is the ONE switch point for the future: a broker swap is a new class
     plus one branch here, not a rewrite of the tools or the UI.

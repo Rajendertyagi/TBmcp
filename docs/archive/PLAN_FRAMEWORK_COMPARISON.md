@@ -1,4 +1,4 @@
-# Flask vs Falcon vs Litestar vs Bottle - Comparison for RTMCP Dashboard
+# Flask vs Falcon vs Litestar vs Bottle - Comparison for TBMCP Dashboard
 
 ## Quick Stats
 
@@ -106,7 +106,7 @@ run(host="127.0.0.1", port=8888)
 ### **Flask** - Best Choice for Your Use Case
 
 **Why:**
-1. **Template support** - You need to serve HTML pages with rtmcp.css
+1. **Template support** - You need to serve HTML pages with tbmcp.css
 2. **Simple** - Minimal code to serve static files + render templates
 3. **Self-contained** - No extra dependencies beyond Flask itself
 4. **Nuitka friendly** - No complex typing or plugins
@@ -167,7 +167,7 @@ if __name__ == "__main__":
 ## Success Criteria
 
 1. Dashboard loads at `http://127.0.0.1:8888/`
-2. Option chain displays with existing rtmcp.css
+2. Option chain displays with existing tbmcp.css
 3. Auto-refresh works via JavaScript fetch
 4. Charts render (lightweight-charts)
 5. Upstox login flow completes

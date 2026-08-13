@@ -1,6 +1,6 @@
 /* ============================================================
-   RTMCP dashboard theme — production ready, self-contained
-   Based on original: "RTMCP dashboard theme — self-contained, no external dependencies."
+   TBMCP dashboard theme — production ready, self-contained
+   Based on original: "TBMCP dashboard theme — self-contained, no external dependencies."
    Gain/loss and buildup-tag COLOURS are injected separately from settings.
    ============================================================ */
 /* ---- Bundled web fonts --------------------------------------
@@ -113,7 +113,7 @@ body {
 /* =========================
    HEADER
    ========================= */
-.rtmcp-header {
+.tbmcp-header {
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -122,12 +122,12 @@ body {
   border-bottom: 1px solid var(--border);
   margin-bottom: 14px;
 }
-.rtmcp-header .title {
+.tbmcp-header .title {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.3px;
 }
-.rtmcp-header .sub {
+.tbmcp-header .sub {
   font-size: 12px;
   color: var(--muted);
 }
@@ -136,32 +136,32 @@ body {
    SUMMARY / STATS
    ========================= */
 /* Controls bar: symbol/expiry selectors + inline stat chips (class-based, no inline styles) */
-.rtmcp-controls-bar {
+.tbmcp-controls-bar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 12px;
 }
-.rtmcp-sel-sym { max-width: 200px; }
-.rtmcp-autorefresh {
+.tbmcp-sel-sym { max-width: 200px; }
+.tbmcp-autorefresh {
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--muted);
   font-size: 13px;
 }
-.rtmcp-chart-controls {
+.tbmcp-chart-controls {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
   margin: 12px 0;
 }
-.rtmcp-in-chart { max-width: 240px; }
+.tbmcp-in-chart { max-width: 240px; }
 
-/* Inline stat chips — share the controls row, height matched to .rtmcp-select (~36px) */
-.rtmcp-stats-inline {
+/* Inline stat chips — share the controls row, height matched to .tbmcp-select (~36px) */
+.tbmcp-stats-inline {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -169,7 +169,7 @@ body {
   flex: 1 1 auto;
   min-width: 0;
 }
-.rtmcp-stat-chip {
+.tbmcp-stat-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -180,29 +180,29 @@ body {
   border-radius: var(--radius-sm);
   white-space: nowrap;
 }
-.rtmcp-stat-chip-label {
+.tbmcp-stat-chip-label {
   font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.rtmcp-stat-chip-value {
+.tbmcp-stat-chip-value {
   font-size: 14px;
   font-weight: 700;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
-.rtmcp-summary {
+.tbmcp-summary {
   margin: 0 0 10px 2px;
   font-size: 13px;
   color: var(--muted);
 }
-.rtmcp-summary b { color: var(--text); }
+.tbmcp-summary b { color: var(--text); }
 
 /* =========================
    TABLE / CARD
    ========================= */
-.rtmcp-card {
+.tbmcp-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -213,26 +213,26 @@ body {
 }
 
 /* Table basics */
-.rtmcp-table {
+.tbmcp-table {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
   font-size: 13px;
   color: var(--text);
 }
-.rtmcp-table th,
-.rtmcp-table td {
+.tbmcp-table th,
+.tbmcp-table td {
   padding: 8px 10px;
   text-align: right;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
   transition: background var(--motion-fast);
 }
-.rtmcp-table th:first-child,
-.rtmcp-table td:first-child { text-align: left; }
+.tbmcp-table th:first-child,
+.tbmcp-table td:first-child { text-align: left; }
 
 /* Sticky header */
-.rtmcp-th th {
+.tbmcp-th th {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -246,7 +246,7 @@ body {
 }
 
 /* Strike column */
-.rtmcp-strike {
+.tbmcp-strike {
   text-align: center !important;
   font-weight: 700;
   background: var(--strike-bg);
@@ -259,25 +259,25 @@ body {
    SYMMETRICAL TABLE - Perfect CSS
    ============================================ */
 
-/* Wrapper: plain container only. The .rtmcp-card is the single scrollport
+/* Wrapper: plain container only. The .tbmcp-card is the single scrollport
    (overflow:auto + max-height) so position:sticky on the header works.
    Giving the wrapper its own overflow would create a nested scrollport and
    break the sticky header. */
-.rtmcp-table-wrapper {
+.tbmcp-table-wrapper {
   width: 100%;
 }
 
 /* ============================================
    SEMANTIC CELL CLASSES
-   Scoped under .rtmcp-table.rtmcp-symmetrical so they beat the base
-   .rtmcp-table td (0,1,1) rule and the :first-child left-align rule.
+   Scoped under .tbmcp-table.tbmcp-symmetrical so they beat the base
+   .tbmcp-table td (0,1,1) rule and the :first-child left-align rule.
    max-width on <td> is ignored by browsers in table-layout:auto, so only
    min-width is used for the adaptive sizing.
    ============================================ */
 
 /* Greek values (Vega, Theta, Gamma, Delta) */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-greek,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-greek {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-greek,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-greek {
   min-width: 68px;
   text-align: right;
   padding: 8px 10px;
@@ -290,8 +290,8 @@ body {
 }
 
 /* IV (Implied Volatility) */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-iv,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-iv {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-iv,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-iv {
   min-width: 58px;
   text-align: right;
   padding: 8px 10px;
@@ -302,8 +302,8 @@ body {
 }
 
 /* Percentage columns (Vol%, LTP%) */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pct,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pct {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-pct,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-pct {
   min-width: 68px;
   text-align: right;
   padding: 8px 10px;
@@ -314,10 +314,10 @@ body {
 }
 
 /* Volume and OI */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-volume,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-volume,
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-oi,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-oi {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-volume,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-volume,
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-oi,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-oi {
   min-width: 85px;
   text-align: right;
   padding: 8px 10px;
@@ -328,8 +328,8 @@ body {
 }
 
 /* LTP (Last Traded Price) - prominence */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-ltp,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-ltp {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-ltp,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-ltp {
   min-width: 78px;
   text-align: right;
   padding: 8px 12px;
@@ -340,8 +340,8 @@ body {
 }
 
 /* Bid/Ask columns - muted, divided */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-bid-ask,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-bid-ask {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-bid-ask,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-bid-ask {
   min-width: 72px;
   text-align: right;
   padding: 8px 8px;
@@ -351,10 +351,10 @@ body {
   border-left: 1px solid var(--border);
 }
 
-/* Buildup tags - centered pills (color comes from injected .rtmcp-build-{slug}).
+/* Buildup tags - centered pills (color comes from injected .tbmcp-build-{slug}).
    Rounded corners only on data cells; the sticky header cell stays flat. */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-buildup,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-buildup,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-buildup {
   min-width: 100px;
   text-align: center;
   padding: 4px 10px;
@@ -362,13 +362,13 @@ body {
   font-size: 11px;
   color: #ffffff;
 }
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-buildup {
   border-radius: var(--radius-pill);
 }
 
 /* Strike price - CENTER COLUMN */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-strike,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-strike {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-strike,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-strike {
   min-width: 90px;
   text-align: center;
   padding: 8px 14px;
@@ -383,8 +383,8 @@ body {
 }
 
 /* PCR (Put-Call Ratio) - CENTER COLUMN */
-.rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pcr,
-.rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pcr {
+.tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-pcr,
+.tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-pcr {
   min-width: 72px;
   text-align: center;
   padding: 8px 12px;
@@ -401,7 +401,7 @@ body {
    ============================================ */
 
 /* Table container */
-.rtmcp-table.rtmcp-symmetrical {
+.tbmcp-table.tbmcp-symmetrical {
   table-layout: auto;
   width: 100%;
   border-collapse: separate;
@@ -410,7 +410,7 @@ body {
 }
 
 /* Header row styling */
-.rtmcp-table.rtmcp-symmetrical .rtmcp-th th {
+.tbmcp-table.tbmcp-symmetrical .tbmcp-th th {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -426,36 +426,36 @@ body {
 }
 
 /* Center header highlighting */
-.rtmcp-table.rtmcp-symmetrical .rtmcp-th th.rtmcp-cell-strike,
-.rtmcp-table.rtmcp-symmetrical .rtmcp-th th.rtmcp-cell-pcr {
+.tbmcp-table.tbmcp-symmetrical .tbmcp-th th.tbmcp-cell-strike,
+.tbmcp-table.tbmcp-symmetrical .tbmcp-th th.tbmcp-cell-pcr {
   background: var(--header-bg);
   color: var(--accent);
   font-size: 11px;
 }
 
 /* Data rows */
-.rtmcp-table.rtmcp-symmetrical tbody tr {
+.tbmcp-table.tbmcp-symmetrical tbody tr {
   transition: background var(--motion-fast);
 }
 
 /* Zebra striping */
-.rtmcp-table.rtmcp-symmetrical tbody tr:nth-child(even) {
+.tbmcp-table.tbmcp-symmetrical tbody tr:nth-child(even) {
   background: var(--card-alt);
 }
 
 /* Hover effect */
-.rtmcp-table.rtmcp-symmetrical tbody tr:hover {
+.tbmcp-table.tbmcp-symmetrical tbody tr:hover {
   background: var(--hover);
 }
 
-/* Row borders (padding is owned by the per-cell .rtmcp-cell-* rules) */
-.rtmcp-table.rtmcp-symmetrical tbody td {
+/* Row borders (padding is owned by the per-cell .tbmcp-cell-* rules) */
+.tbmcp-table.tbmcp-symmetrical tbody td {
   border-bottom: 1px solid var(--border);
 }
 
 /* Vertical dividers for center columns */
-.rtmcp-table.rtmcp-symmetrical tbody td.rtmcp-cell-strike,
-.rtmcp-table.rtmcp-symmetrical tbody td.rtmcp-cell-pcr {
+.tbmcp-table.tbmcp-symmetrical tbody td.tbmcp-cell-strike,
+.tbmcp-table.tbmcp-symmetrical tbody td.tbmcp-cell-pcr {
   border-left: 2px solid var(--border);
   border-right: 2px solid var(--border);
 }
@@ -465,36 +465,36 @@ body {
    ============================================ */
 
 @media (max-width: 1400px) {
-  .rtmcp-table.rtmcp-symmetrical {
+  .tbmcp-table.tbmcp-symmetrical {
     font-size: 11px;
   }
 
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-greek,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-greek,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-iv,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-iv,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-pct,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-pct,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-volume,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-volume,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-oi,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-oi,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-ltp,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-ltp,
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-bid-ask,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-bid-ask {
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-greek,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-greek,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-iv,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-iv,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-pct,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-pct,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-volume,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-volume,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-oi,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-oi,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-ltp,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-ltp,
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-bid-ask,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-bid-ask {
     padding: 7px 8px;
     min-width: 60px;
   }
 }
 
 @media (max-width: 1200px) {
-  .rtmcp-table.rtmcp-symmetrical {
+  .tbmcp-table.tbmcp-symmetrical {
     font-size: 10px;
   }
 
-  .rtmcp-table.rtmcp-symmetrical th.rtmcp-cell-buildup,
-  .rtmcp-table.rtmcp-symmetrical td.rtmcp-cell-buildup {
+  .tbmcp-table.tbmcp-symmetrical th.tbmcp-cell-buildup,
+  .tbmcp-table.tbmcp-symmetrical td.tbmcp-cell-buildup {
     min-width: 85px;
   }
 }
@@ -504,14 +504,14 @@ body {
    ============================================ */
 
 /* Keep old classes working (legacy non-symmetrical tables only).
-   The symmetrical table uses scoped .rtmcp-cell-* rules that win over this. */
-.rtmcp-table th:first-child,
-.rtmcp-table td:first-child {
+   The symmetrical table uses scoped .tbmcp-cell-* rules that win over this. */
+.tbmcp-table th:first-child,
+.tbmcp-table td:first-child {
   text-align: left;
 }
 
 /* Strike class for non-symmetrical tables */
-.rtmcp-strike {
+.tbmcp-strike {
   text-align: center !important;
   font-weight: 700;
   background: var(--strike-bg);
@@ -521,7 +521,7 @@ body {
 }
 
 /* Generic badge/tag */
-.badge, .rtmcp-badge, span.tag {
+.badge, .tbmcp-badge, span.tag {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 12px;
@@ -532,10 +532,10 @@ body {
 }
 
 /* Empty placeholder */
-.rtmcp-empty { text-align: center !important; color: var(--muted); }
+.tbmcp-empty { text-align: center !important; color: var(--muted); }
 
 /* Status indicators */
-.rtmcp-status {
+.tbmcp-status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -544,16 +544,16 @@ body {
   font-size: 12px;
   font-weight: 500;
 }
-.rtmcp-status.ok { background: rgba(63,185,80,0.15); color: var(--success); }
-.rtmcp-status.err { background: rgba(248,81,73,0.15); color: var(--danger); }
-.rtmcp-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.rtmcp-ok, .rtmcp-err { font-weight: 600; }
+.tbmcp-status.ok { background: rgba(63,185,80,0.15); color: var(--success); }
+.tbmcp-status.err { background: rgba(248,81,73,0.15); color: var(--danger); }
+.tbmcp-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.tbmcp-ok, .tbmcp-err { font-weight: 600; }
 
 /* =========================
    CONTROLS
    ========================= */
 /* Buttons */
-button, .q-btn, .rtmcp-btn {
+button, .q-btn, .tbmcp-btn {
   background: var(--accent);
   color: #ffffff;
   border: none;
@@ -567,11 +567,11 @@ button, .q-btn, .rtmcp-btn {
   align-items: center;
   gap: 6px;
 }
-button:hover, .q-btn:hover, .rtmcp-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-button:active, .q-btn:active, .rtmcp-btn:active { transform: translateY(0); }
+button:hover, .q-btn:hover, .tbmcp-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+button:active, .q-btn:active, .tbmcp-btn:active { transform: translateY(0); }
 
 /* Secondary */
-button.secondary, .q-btn-secondary, .rtmcp-btn-secondary {
+button.secondary, .q-btn-secondary, .tbmcp-btn-secondary {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
@@ -580,7 +580,7 @@ button.secondary:hover, .q-btn-secondary:hover { border-color: var(--muted); }
 
 /* Inputs */
 input[type="text"], input[type="number"], input[type="search"],
-.q-field input, input.q-input, .rtmcp-input input {
+.q-field input, input.q-input, .tbmcp-input input {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
@@ -591,14 +591,14 @@ input[type="text"], input[type="number"], input[type="search"],
   max-width: 200px;
   transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
 }
-input:focus, .q-field input:focus, .rtmcp-input input:focus {
+input:focus, .q-field input:focus, .tbmcp-input input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(88,166,255,0.12);
 }
 
 /* Selects */
-select, .q-select, .q-field--selected, .rtmcp-select select {
+select, .q-select, .q-field--selected, .tbmcp-select select {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
@@ -615,9 +615,9 @@ select:focus, .q-select:focus {
 }
 
 /* Symbol combobox (Tools page) — custom dropdown that clears on focus */
-.rtmcp-combo { position: relative; }
-.rtmcp-combo .rtmcp-input { cursor: pointer; }
-.rtmcp-combo-list {
+.tbmcp-combo { position: relative; }
+.tbmcp-combo .tbmcp-input { cursor: pointer; }
+.tbmcp-combo-list {
   position: absolute;
   z-index: 50;
   top: calc(100% + 4px);
@@ -632,14 +632,14 @@ select:focus, .q-select:focus {
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
   display: none;
 }
-.rtmcp-combo-list.open { display: block; }
-.rtmcp-combo-opt {
+.tbmcp-combo-list.open { display: block; }
+.tbmcp-combo-opt {
   padding: 8px 12px;
   font-size: 13px;
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.rtmcp-combo-opt:hover { background: var(--accent); color: #fff; }
+.tbmcp-combo-opt:hover { background: var(--accent); color: #fff; }
 
 /* Checkbox fallback */
 input[type="checkbox"], .q-checkbox, .q-checkbox__svg {
@@ -679,7 +679,7 @@ input[type="checkbox"], .q-checkbox, .q-checkbox__svg {
 /* =========================
    FEEDBACK
    ========================= */
-.rtmcp-loading {
+.tbmcp-loading {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -688,19 +688,19 @@ input[type="checkbox"], .q-checkbox, .q-checkbox__svg {
   color: var(--muted);
   font-size: 14px;
 }
-.spinner, .rtmcp-spinner, .q-spinner {
+.spinner, .tbmcp-spinner, .q-spinner {
   display: inline-block;
   width: 20px;
   height: 20px;
   border: 2px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: rtmcp-spin 0.8s linear infinite;
+  animation: tbmcp-spin 0.8s linear infinite;
 }
-@keyframes rtmcp-spin { to { transform: rotate(360deg); } }
+@keyframes tbmcp-spin { to { transform: rotate(360deg); } }
 
 /* Progress */
-progress, .q-progress, .rtmcp-progress {
+progress, .q-progress, .tbmcp-progress {
   width: 100%;
   height: 6px;
   border-radius: 3px;
@@ -713,7 +713,7 @@ progress::-webkit-progress-value { background: var(--accent); border-radius: 3px
 /* =========================
    CARD
    ========================= */
-.card, .rtmcp-card-generic {
+.card, .tbmcp-card-generic {
   contain: content;
   background: var(--card);
   border: 1px solid var(--border);
@@ -775,26 +775,26 @@ a:hover, .q-btn--link:hover { opacity: 0.8; text-decoration: underline; }
 .table-responsive::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-.rtmcp-card::-webkit-scrollbar, .table-responsive::-webkit-scrollbar { width: 10px; height: 10px; }
-.rtmcp-card::-webkit-scrollbar-track, .table-responsive::-webkit-scrollbar-track { background: var(--card-alt); }
-.rtmcp-card::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
-.rtmcp-card::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+.tbmcp-card::-webkit-scrollbar, .table-responsive::-webkit-scrollbar { width: 10px; height: 10px; }
+.tbmcp-card::-webkit-scrollbar-track, .table-responsive::-webkit-scrollbar-track { background: var(--card-alt); }
+.tbmcp-card::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+.tbmcp-card::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 /* Always-visible horizontal scroll proxy under the chain table (wired in market.js).
    Gives a reachable horizontal scroll control so users never hunt for the
    card's native scrollbar, which sits at the bottom of a tall scroll container. */
-.rtmcp-hscroll {
+.tbmcp-hscroll {
   width: 100%;
   height: 12px;
   overflow-x: auto;
   overflow-y: hidden;
   margin-top: 6px;
 }
-.rtmcp-hscroll > div { height: 1px; }
-.rtmcp-hscroll::-webkit-scrollbar { height: 8px; }
-.rtmcp-hscroll::-webkit-scrollbar-track { background: var(--card-alt); border-radius: 4px; }
-.rtmcp-hscroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-.rtmcp-hscroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+.tbmcp-hscroll > div { height: 1px; }
+.tbmcp-hscroll::-webkit-scrollbar { height: 8px; }
+.tbmcp-hscroll::-webkit-scrollbar-track { background: var(--card-alt); border-radius: 4px; }
+.tbmcp-hscroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.tbmcp-hscroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
 /* =========================
    NICEGUI OVERRIDES
@@ -806,7 +806,7 @@ a:hover, .q-btn--link:hover { opacity: 0.8; text-decoration: underline; }
 /* =========================
    FORM ELEMENTS
    ========================= */
-textarea, .q-field textarea, .rtmcp-textarea textarea {
+textarea, .q-field textarea, .tbmcp-textarea textarea {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
@@ -943,7 +943,7 @@ legend {
 .skeleton-cell {
   background: linear-gradient(90deg, var(--card-alt) 25%, var(--hover) 50%, var(--card-alt) 75%);
   background-size: 200% 100%;
-  animation: rtmcp-skeleton 1.5s infinite;
+  animation: tbmcp-skeleton 1.5s infinite;
   border-radius: 4px;
   height: 14px;
 }
@@ -956,7 +956,7 @@ legend {
 }
 
 /* Canonical skeleton keyframes */
-@keyframes rtmcp-skeleton {
+@keyframes tbmcp-skeleton {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
@@ -989,7 +989,7 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), select:focus:
 
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
-  .rtmcp-spinner, .rtmcp-pulse, .rtmcp-skeleton, .rtmcp-fade-in, .rtmcp-slide-up, .spinner {
+  .tbmcp-spinner, .tbmcp-pulse, .tbmcp-skeleton, .tbmcp-fade-in, .tbmcp-slide-up, .spinner {
     animation: none !important;
     transition: none !important;
   }
@@ -999,20 +999,20 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), select:focus:
    RESPONSIVE
    ========================= */
 @media (max-width: 1280px) {
-  .rtmcp-table { font-size: 12px; }
-  .rtmcp-table th, .rtmcp-table td { padding: 6px 8px; }
+  .tbmcp-table { font-size: 12px; }
+  .tbmcp-table th, .tbmcp-table td { padding: 6px 8px; }
 }
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-  .rtmcp-header { padding: 12px 14px; }
-  .rtmcp-header .title { font-size: 18px; }
+  .tbmcp-header { padding: 12px 14px; }
+  .tbmcp-header .title { font-size: 18px; }
 }
 @media (max-width: 640px) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .rtmcp-table { font-size: 11px; }
-  .rtmcp-table th, .rtmcp-table td { padding: 4px 6px; }
+  .tbmcp-table { font-size: 11px; }
+  .tbmcp-table th, .tbmcp-table td { padding: 4px 6px; }
 }
 
 /* =========================
@@ -1020,23 +1020,23 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), select:focus:
    ========================= */
 @media print {
   body, .nicegui-content { background: #fff !important; color: #000 !important; }
-  .rtmcp-card, .card { box-shadow: none; border: 1px solid #ccc; }
-  .rtmcp-header { background: #f5f5f5; border-bottom: 2px solid #333; }
+  .tbmcp-card, .card { box-shadow: none; border: 1px solid #ccc; }
+  .tbmcp-header { background: #f5f5f5; border-bottom: 2px solid #333; }
   button, .q-btn { background: #333 !important; color: #fff !important; }
-  .rtmcp-controls, button, input, select, .q-field { display: none !important; }
+  .tbmcp-controls, button, input, select, .q-field { display: none !important; }
 }
 
 /* =========================
    SETUP PANEL
    ========================= */
-.rtmcp-setup {
+.tbmcp-setup {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
   margin-bottom: 14px;
 }
-.rtmcp-setup-title {
+.tbmcp-setup-title {
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1058,10 +1058,10 @@ button:focus:not(:focus-visible), input:focus:not(:focus-visible), select:focus:
   font-size: 15px !important;
   line-height: 1.5;
 }
-.badge.sm, .rtmcp-badge.sm, span.tag.sm {
+.badge.sm, .tbmcp-badge.sm, span.tag.sm {
   font-size: 10px; padding: 1px 6px;
 }
-.badge.lg, .rtmcp-badge.lg, span.tag.lg {
+.badge.lg, .tbmcp-badge.lg, span.tag.lg {
   font-size: 13px; padding: 4px 10px;
 }
 
@@ -1077,165 +1077,165 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
 /* =========================
    EMPTY STATE
    ========================= */
-.rtmcp-empty-state {
+.tbmcp-empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 60px 20px; color: var(--muted); text-align: center;
 }
-.rtmcp-empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
-.rtmcp-empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
-.rtmcp-empty-state p { font-size: 13px; max-width: 400px; }
+.tbmcp-empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.tbmcp-empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+.tbmcp-empty-state p { font-size: 13px; max-width: 400px; }
 
 /* =========================
    TABS
    ========================= */
-.rtmcp-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-.rtmcp-tabs:empty { display: none; }
-.rtmcp-tab {
+.tbmcp-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.tbmcp-tabs:empty { display: none; }
+.tbmcp-tab {
   padding: 10px 20px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 500;
   border-bottom: 2px solid transparent; transition: all var(--motion-fast); margin-bottom: -1px;
 }
-.rtmcp-tab:hover { color: var(--text); }
-.rtmcp-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.rtmcp-tab-content { min-height: 200px; }
+.tbmcp-tab:hover { color: var(--text); }
+.tbmcp-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tbmcp-tab-content { min-height: 200px; }
 
 /* =========================
    MODAL / DIALOG
    ========================= */
-.rtmcp-modal {
+.tbmcp-modal {
   position: fixed; inset: 0; background: rgba(0,0,0,0.7);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
 @supports not ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
-  .rtmcp-modal { background: rgba(0,0,0,0.85); }
+  .tbmcp-modal { background: rgba(0,0,0,0.85); }
 }
-.rtmcp-modal.hidden { display: none; }
-.rtmcp-modal-content {
+.tbmcp-modal.hidden { display: none; }
+.tbmcp-modal-content {
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
   padding: 24px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  animation: rtmcp-modal-in var(--motion-med) ease;
+  animation: tbmcp-modal-in var(--motion-med) ease;
 }
-@keyframes rtmcp-modal-in {
+@keyframes tbmcp-modal-in {
   from { opacity: 0; transform: scale(0.95) translateY(-10px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
-.rtmcp-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.rtmcp-modal-title { font-size: 18px; font-weight: 600; color: var(--text); margin: 0; }
-.rtmcp-modal-close {
+.tbmcp-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tbmcp-modal-title { font-size: 18px; font-weight: 600; color: var(--text); margin: 0; }
+.tbmcp-modal-close {
   background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer;
   padding: 4px 8px; border-radius: 4px;
 }
-.rtmcp-modal-close:hover { background: var(--border); color: var(--text); }
-.rtmcp-modal-body { color: var(--text); font-size: 14px; line-height: 1.6; }
-.rtmcp-modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.tbmcp-modal-close:hover { background: var(--border); color: var(--text); }
+.tbmcp-modal-body { color: var(--text); font-size: 14px; line-height: 1.6; }
+.tbmcp-modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
 
 /* =========================
    DIVIDERS
    ========================= */
-.rtmcp-divider { height: 1px; background: var(--border); margin: 16px 0; }
-.rtmcp-divider.vertical { width: 1px; height: auto; margin: 0 16px; }
-.rtmcp-divider.dashed { border-top: 1px dashed var(--border); background: none; }
+.tbmcp-divider { height: 1px; background: var(--border); margin: 16px 0; }
+.tbmcp-divider.vertical { width: 1px; height: auto; margin: 0 16px; }
+.tbmcp-divider.dashed { border-top: 1px dashed var(--border); background: none; }
 
 /* =========================
    BADGE COUNT
    ========================= */
-.rtmcp-badge-count {
+.tbmcp-badge-count {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--radius-pill);
   background: var(--accent); color: #fff; font-size: 11px; font-weight: 600;
 }
-.rtmcp-badge-count.sm { min-width: 14px; height: 14px; font-size: 10px; padding: 0 4px; }
-.rtmcp-badge-count.lg { min-width: 22px; height: 22px; font-size: 12px; padding: 0 6px; }
+.tbmcp-badge-count.sm { min-width: 14px; height: 14px; font-size: 10px; padding: 0 4px; }
+.tbmcp-badge-count.lg { min-width: 22px; height: 22px; font-size: 12px; padding: 0 6px; }
 
 /* =========================
    PAGINATION
    ========================= */
-.rtmcp-pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0; }
-.rtmcp-page-btn {
+.tbmcp-pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0; }
+.tbmcp-page-btn {
   padding: 6px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 6px;
   color: var(--text); font-size: 13px; cursor: pointer; transition: all var(--motion-fast);
 }
-.rtmcp-page-btn:hover { border-color: var(--accent); color: var(--accent); }
-.rtmcp-page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-.rtmcp-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.rtmcp-page-info { font-size: 12px; color: var(--muted); margin: 0 8px; }
+.tbmcp-page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tbmcp-page-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tbmcp-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.tbmcp-page-info { font-size: 12px; color: var(--muted); margin: 0 8px; }
 
 /* =========================
    BREADCRUMB
    ========================= */
-.rtmcp-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-.rtmcp-breadcrumb a { color: var(--accent); text-decoration: none; }
-.rtmcp-breadcrumb a:hover { text-decoration: underline; }
-.rtmcp-breadcrumb-sep { color: var(--border); }
-.rtmcp-breadcrumb-current { color: var(--text); }
+.tbmcp-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.tbmcp-breadcrumb a { color: var(--accent); text-decoration: none; }
+.tbmcp-breadcrumb a:hover { text-decoration: underline; }
+.tbmcp-breadcrumb-sep { color: var(--border); }
+.tbmcp-breadcrumb-current { color: var(--text); }
 
 /* =========================
    LISTS
    ========================= */
-.rtmcp-list { list-style: none; padding: 0; margin: 0; }
-.rtmcp-list-item {
+.tbmcp-list { list-style: none; padding: 0; margin: 0; }
+.tbmcp-list-item {
   display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px;
   transition: background var(--motion-fast);
 }
-.rtmcp-list-item:hover { background: var(--hover); }
-.rtmcp-list-item + .rtmcp-list-item { border-top: 1px solid var(--border); }
-.rtmcp-list-icon {
+.tbmcp-list-item:hover { background: var(--hover); }
+.tbmcp-list-item + .tbmcp-list-item { border-top: 1px solid var(--border); }
+.tbmcp-list-icon {
   width: 32px; height: 32px; border-radius: 6px; background: var(--card-alt);
   display: flex; align-items: center; justify-content: center; font-size: 14px;
 }
-.rtmcp-list-content { flex: 1; }
-.rtmcp-list-title { font-size: 14px; font-weight: 500; color: var(--text); }
-.rtmcp-list-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.rtmcp-list-action { color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
-.rtmcp-list-action:hover { background: var(--border); color: var(--text); }
+.tbmcp-list-content { flex: 1; }
+.tbmcp-list-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.tbmcp-list-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.tbmcp-list-action { color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+.tbmcp-list-action:hover { background: var(--border); color: var(--text); }
 
 /* =========================
    PROGRESS STEPS
    ========================= */
-.rtmcp-progress-steps { display: flex; align-items: center; gap: 0; margin: 20px 0; }
-.rtmcp-step {
+.tbmcp-progress-steps { display: flex; align-items: center; gap: 0; margin: 20px 0; }
+.tbmcp-step {
   display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;
 }
-.rtmcp-step:not(:last-child)::after {
+.tbmcp-step:not(:last-child)::after {
   content: ""; position: absolute; top: 14px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: 0;
 }
-.rtmcp-step.completed:not(:last-child)::after { background: var(--success); }
-.rtmcp-step.active:not(:last-child)::after { background: linear-gradient(90deg, var(--accent) 50%, var(--border) 50%); }
-.rtmcp-step-circle {
+.tbmcp-step.completed:not(:last-child)::after { background: var(--success); }
+.tbmcp-step.active:not(:last-child)::after { background: linear-gradient(90deg, var(--accent) 50%, var(--border) 50%); }
+.tbmcp-step-circle {
   width: 28px; height: 28px; border-radius: 50%; background: var(--card); border: 2px solid var(--border);
   display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--muted);
   z-index: 1; transition: all var(--motion-fast);
 }
-.rtmcp-step.completed .rtmcp-step-circle { background: var(--success); border-color: var(--success); color: #fff; }
-.rtmcp-step.active .rtmcp-step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
-.rtmcp-step-label { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
-.rtmcp-step.completed .rtmcp-step-label, .rtmcp-step.active .rtmcp-step-label { color: var(--text); }
+.tbmcp-step.completed .tbmcp-step-circle { background: var(--success); border-color: var(--success); color: #fff; }
+.tbmcp-step.active .tbmcp-step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tbmcp-step-label { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+.tbmcp-step.completed .tbmcp-step-label, .tbmcp-step.active .tbmcp-step-label { color: var(--text); }
 
 /* =========================
    SKELETON TABLE ROWS
    ========================= */
-.rtmcp-skeleton-row { display: flex; gap: 8px; padding: 10px 16px; align-items: center; border-bottom: 1px solid var(--border); }
-.rtmcp-skeleton-row:last-child { border-bottom: none; }
-.rtmcp-skeleton-cell {
+.tbmcp-skeleton-row { display: flex; gap: 8px; padding: 10px 16px; align-items: center; border-bottom: 1px solid var(--border); }
+.tbmcp-skeleton-row:last-child { border-bottom: none; }
+.tbmcp-skeleton-cell {
   background: linear-gradient(90deg, var(--card-alt) 25%, var(--hover) 50%, var(--card-alt) 75%);
-  background-size: 200% 100%; animation: rtmcp-skeleton 1.5s infinite; border-radius: 4px; height: 14px;
+  background-size: 200% 100%; animation: tbmcp-skeleton 1.5s infinite; border-radius: 4px; height: 14px;
 }
-.rtmcp-skeleton-cell.wide { width: 100px; }
-.rtmcp-skeleton-cell.medium { width: 70px; }
-.rtmcp-skeleton-cell.narrow { width: 50px; }
-.rtmcp-skeleton-cell.strike { width: 60px; background: linear-gradient(90deg, var(--strike-bg) 25%, var(--hover) 50%, var(--strike-bg) 75%); }
-.rtmcp-skeleton-cell.cell { width: 80px; }
-.rtmcp-skeleton-cell.pill { width: 60px; height: 20px; border-radius: var(--radius-pill); }
+.tbmcp-skeleton-cell.wide { width: 100px; }
+.tbmcp-skeleton-cell.medium { width: 70px; }
+.tbmcp-skeleton-cell.narrow { width: 50px; }
+.tbmcp-skeleton-cell.strike { width: 60px; background: linear-gradient(90deg, var(--strike-bg) 25%, var(--hover) 50%, var(--strike-bg) 75%); }
+.tbmcp-skeleton-cell.cell { width: 80px; }
+.tbmcp-skeleton-cell.pill { width: 60px; height: 20px; border-radius: var(--radius-pill); }
 
 /* =========================
    ANIMATIONS
    ========================= */
-@keyframes rtmcp-fade-in { from { opacity: 0; } to { opacity: 1; } }
-.rtmcp-fade-in { animation: rtmcp-fade-in var(--motion-med) ease; }
-@keyframes rtmcp-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.rtmcp-slide-up { animation: rtmcp-slide-up var(--motion-med) ease; }
-@keyframes rtmcp-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
-.rtmcp-pulse { animation: rtmcp-pulse 2s infinite; }
+@keyframes tbmcp-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.tbmcp-fade-in { animation: tbmcp-fade-in var(--motion-med) ease; }
+@keyframes tbmcp-slide-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tbmcp-slide-up { animation: tbmcp-slide-up var(--motion-med) ease; }
+@keyframes tbmcp-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+.tbmcp-pulse { animation: tbmcp-pulse 2s infinite; }
 
 /* =========================
    VISUAL REGRESSION / DEBUG HELPERS (optional)
@@ -1245,21 +1245,21 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
 /* =========================
    SETTINGS (collapsible)
    ========================= */
-.rtmcp-settings {
+.tbmcp-settings {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 6px 16px 14px;
   margin-bottom: 14px;
 }
-.rtmcp-settings .q-expansion-item__header { color: var(--text); font-weight: 600; }
-.rtmcp-settings .q-expansion-item__content { padding-top: 8px; }
+.tbmcp-settings .q-expansion-item__header { color: var(--text); font-weight: 600; }
+.tbmcp-settings .q-expansion-item__content { padding-top: 8px; }
 
 /* =========================
    TOP BAR (brand + ticker + page tabs)
    One full-width horizontal header like a trading terminal.
    ========================= */
-.rtmcp-topbar {
+.tbmcp-topbar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -1272,7 +1272,7 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   border-bottom: 1px solid var(--border);
   margin-bottom: 14px;
 }
-.rtmcp-home-icon {
+.tbmcp-home-icon {
   color: var(--muted);
   font-size: 22px;
   cursor: pointer;
@@ -1282,12 +1282,12 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   border-radius: var(--radius-sm);
   transition: color var(--motion-fast), background var(--motion-fast);
 }
-.rtmcp-home-icon:hover,
-.rtmcp-gear-icon:hover {
+.tbmcp-home-icon:hover,
+.tbmcp-gear-icon:hover {
   color: var(--text);
   background: rgba(255, 255, 255, 0.04);
 }
-.rtmcp-gear-icon {
+.tbmcp-gear-icon {
   color: var(--muted);
   font-size: 22px;
   cursor: pointer;
@@ -1298,7 +1298,7 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   border-radius: var(--radius-sm);
   transition: color var(--motion-fast), background var(--motion-fast);
 }
-.rtmcp-nav-link {
+.tbmcp-nav-link {
   color: var(--muted);
   font-size: 14px;
   font-weight: 600;
@@ -1308,21 +1308,21 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   user-select: none;
   transition: color var(--motion-fast), background var(--motion-fast);
 }
-.rtmcp-nav-link:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
-.rtmcp-nav-link.active { color: var(--accent); }
+.tbmcp-nav-link:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+.tbmcp-nav-link.active { color: var(--accent); }
 
 /* =========================
    HOME / INDEX PAGE
    ========================= */
-.rtmcp-home { max-width: 980px; margin: 24px auto; padding: 0 18px; }
-.rtmcp-home-title { font-size: 28px; font-weight: 200; margin: 0 0 6px; }
-.rtmcp-home-sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
-.rtmcp-home-grid {
+.tbmcp-home { max-width: 980px; margin: 24px auto; padding: 0 18px; }
+.tbmcp-home-title { font-size: 28px; font-weight: 200; margin: 0 0 6px; }
+.tbmcp-home-sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+.tbmcp-home-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
 }
-.rtmcp-home-card {
+.tbmcp-home-card {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1336,17 +1336,17 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   font: inherit;
   transition: border-color var(--motion-fast), transform var(--motion-fast), box-shadow var(--motion-fast);
 }
-.rtmcp-home-card:hover {
+.tbmcp-home-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
-.rtmcp-home-card-title { font-size: 18px; font-weight: 200; }
-.rtmcp-home-card-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
-.rtmcp-home-card-go { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 4px; }
-.rtmcp-chart-page { max-width: 1100px; margin: 16px auto; padding: 0 18px; }
-.rtmcp-chart-canvas { width: 100%; height: 420px; }
-.rtmcp-topbar-left {
+.tbmcp-home-card-title { font-size: 18px; font-weight: 200; }
+.tbmcp-home-card-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+.tbmcp-home-card-go { font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 4px; }
+.tbmcp-chart-page { max-width: 1100px; margin: 16px auto; padding: 0 18px; }
+.tbmcp-chart-canvas { width: 100%; height: 420px; }
+.tbmcp-topbar-left {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1354,33 +1354,33 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   min-width: 0;
 }
 /* Ticker cards are compact inside the top bar (override the standalone block below) */
-.rtmcp-topbar .rtmcp-ticker {
+.tbmcp-topbar .tbmcp-ticker {
   margin-bottom: 0;
   flex-wrap: nowrap;
   max-width: 100%;
   overflow-x: auto;
 }
-.rtmcp-topbar .rtmcp-ticker-card {
+.tbmcp-topbar .tbmcp-ticker-card {
   flex: 0 1 auto;
   padding: 6px 14px;
   min-width: 0;
 }
-.rtmcp-topbar .rtmcp-ticker-last { font-size: 12px; }
-.rtmcp-topbar .rtmcp-ticker-name { font-size: 12px; }
-.rtmcp-topbar .rtmcp-ticker-chg { min-width: 0; text-align: right; }
-.rtmcp-topbar .rtmcp-ticker-err { min-width: 0; }
-.rtmcp-topbar .q-tabs { border-bottom: none; margin-left: auto; }
+.tbmcp-topbar .tbmcp-ticker-last { font-size: 12px; }
+.tbmcp-topbar .tbmcp-ticker-name { font-size: 12px; }
+.tbmcp-topbar .tbmcp-ticker-chg { min-width: 0; text-align: right; }
+.tbmcp-topbar .tbmcp-ticker-err { min-width: 0; }
+.tbmcp-topbar .q-tabs { border-bottom: none; margin-left: auto; }
 
 /* =========================
    TOP TICKER BAR
    ========================= */
-.rtmcp-ticker {
+.tbmcp-ticker {
   display: flex;
   gap: 12px;
   margin-bottom: 14px;
   flex-wrap: wrap;
 }
-.rtmcp-ticker-card {
+.tbmcp-ticker-card {
   flex: 1 1 220px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -1388,46 +1388,46 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   padding: 12px 16px;
   transition: border-color var(--motion-fast);
 }
-.rtmcp-ticker-card:hover { border-color: var(--accent); }
-.rtmcp-ticker-inner {
+.tbmcp-ticker-card:hover { border-color: var(--accent); }
+.tbmcp-ticker-inner {
   display: flex;
   align-items: baseline;
   gap: 12px;
 }
-.rtmcp-ticker-stack {
+.tbmcp-ticker-stack {
   flex-direction: column;
   align-items: flex-start;
   gap: 1px;
   line-height: 1.05;
 }
-.rtmcp-ticker-line2 {
+.tbmcp-ticker-line2 {
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
-.rtmcp-ticker-line2 .rtmcp-ticker-last { margin-left: 0; }
-.rtmcp-ticker-name {
+.tbmcp-ticker-line2 .tbmcp-ticker-last { margin-left: 0; }
+.tbmcp-ticker-name {
   font-size: 13px;
   font-weight: 200;
   letter-spacing: 0.5px;
   color: var(--muted);
   text-transform: uppercase;
 }
-.rtmcp-ticker-last {
+.tbmcp-ticker-last {
   font-size: 24px;
   font-weight: 300;
   color: var(--text);
   font-variant-numeric: tabular-nums;
   margin-left: auto;
 }
-.rtmcp-ticker-chg {
+.tbmcp-ticker-chg {
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   min-width: 160px;
   text-align: right;
 }
-.rtmcp-ticker-err {
+.tbmcp-ticker-err {
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -1441,7 +1441,7 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
 /* =========================
    INDIA VIX HERO
    ========================= */
-.rtmcp-vix-hero {
+.tbmcp-vix-hero {
   display: flex;
   align-items: baseline;
   gap: 16px;
@@ -1451,21 +1451,21 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
   border-radius: var(--radius);
   margin-bottom: 16px;
 }
-.rtmcp-vix-title {
+.tbmcp-vix-title {
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--muted);
 }
-.rtmcp-vix-value {
+.tbmcp-vix-value {
   font-size: 44px;
   font-weight: 800;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.rtmcp-vix-change {
+.tbmcp-vix-change {
   font-size: 15px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -1485,14 +1485,14 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
 /* =========================
    DATA DISPLAY (color emphasis + buildup pill)
    ========================= */
-.rtmcp-up   { color: var(--success); font-weight: 600; }
-.rtmcp-down { color: var(--danger);  font-weight: 600; }
-.rtmcp-flat { color: var(--muted);   font-weight: 600; }
+.tbmcp-up   { color: var(--success); font-weight: 600; }
+.tbmcp-down { color: var(--danger);  font-weight: 600; }
+.tbmcp-flat { color: var(--muted);   font-weight: 600; }
 
-/* Buildup tag base (color is injected per-tag via .rtmcp-build-{slug}).
+/* Buildup tag base (color is injected per-tag via .tbmcp-build-{slug}).
    Kept display:inline-block only for legacy <span> usage; on the <td> the
-   .rtmcp-cell-buildup rule above provides the pill look. */
-.rtmcp-build {
+   .tbmcp-cell-buildup rule above provides the pill look. */
+.tbmcp-build {
   display: inline-block;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
@@ -1506,26 +1506,26 @@ input.invalid:focus, .q-field--error input:focus { box-shadow: 0 0 0 2px rgba(24
    SPA SHELL (Falcon + static HTML)
    ========================= */
 body { min-height: 100vh; }
-.rtmcp-content {
+.tbmcp-content {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
   padding: 0 18px 24px;
 }
 .page { display: none; }              /* shown by app.js; one visible at a time */
-.rtmcp-chart-grid { width: 100%; margin-top: 8px; }
-.rtmcp-chain { margin-top: 8px; }
+.tbmcp-chart-grid { width: 100%; margin-top: 8px; }
+.tbmcp-chain { margin-top: 8px; }
 
 /* =========================
    TOOLS TEST PAGE
    ========================= */
-.rtmcp-tools-summary {
+.tbmcp-tools-summary {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 10px 0;
 }
-.rtmcp-pill {
+.tbmcp-pill {
   display: inline-flex;
   align-items: center;
   padding: 3px 10px;
@@ -1535,16 +1535,16 @@ body { min-height: 100vh; }
   color: var(--muted);
   font-size: 12px;
 }
-.rtmcp-pill.ok { color: var(--success); border-color: rgba(16,185,129,0.4); }
-.rtmcp-pill.err { color: var(--danger); border-color: rgba(244,63,94,0.4); }
+.tbmcp-pill.ok { color: var(--success); border-color: rgba(16,185,129,0.4); }
+.tbmcp-pill.err { color: var(--danger); border-color: rgba(244,63,94,0.4); }
 
-.rtmcp-tools-grid {
+.tbmcp-tools-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 12px;
   margin-top: 6px;
 }
-.rtmcp-tool-card {
+.tbmcp-tool-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1553,28 +1553,28 @@ body { min-height: 100vh; }
   flex-direction: column;
   min-width: 0;
 }
-.rtmcp-tool-head {
+.tbmcp-tool-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
 }
-.rtmcp-tool-name {
+.tbmcp-tool-name {
   font-family: var(--font-mono);
   font-weight: 600;
   color: var(--text);
   font-size: 13px;
 }
-.rtmcp-badge {
+.tbmcp-badge {
   font-size: 11px;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   letter-spacing: 0.04em;
 }
-.rtmcp-badge.ok { background: rgba(16,185,129,0.15); color: var(--success); }
-.rtmcp-badge.err { background: rgba(244,63,94,0.15); color: var(--danger); }
-.rtmcp-json {
+.tbmcp-badge.ok { background: rgba(16,185,129,0.15); color: var(--success); }
+.tbmcp-badge.err { background: rgba(244,63,94,0.15); color: var(--danger); }
+.tbmcp-json {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -1590,4 +1590,4 @@ body { min-height: 100vh; }
   word-break: break-word;
 }
 
-/* End of file - RTMCP theme production ready */
+/* End of file - TBMCP theme production ready */

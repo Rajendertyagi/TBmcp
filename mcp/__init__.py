@@ -1,1 +1,1 @@
-"""AI-facing MCP server for RTMCP (raw data + F&O analytics tools)."""
+"""AI-facing MCP server for TBMCP (raw data + F&O analytics tools)."""

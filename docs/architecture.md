@@ -45,7 +45,7 @@ TBMCP/                       # git repo root = the app
 ├── zeromcp/                 # the forked ZeroMCP engine (self-contained project)
 │   └── src/zeromcp/         #   the importable engine package
 ├── docs/                    # you are here
-└── pyproject.toml           # app package metadata (name="rtmcp")
+└── pyproject.toml           # app package metadata (name="tbmcp")
 ```
 
 The fork `zeromcp/` is a **self-contained project** (its own `pyproject.toml`,

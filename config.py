@@ -1,4 +1,4 @@
-"""Configuration & portable paths for RTMCP.
+"""Configuration & portable paths for TBMCP.
 
 Mirrors the portable layout used by the TypeScript version: when frozen into a
 single .exe (Nuitka) the config folder is the directory holding the exe, so the
@@ -33,7 +33,7 @@ CONFIG_DIR = APP_DIR  # token + .env both live in APP_DIR for portability
 
 TOKEN_FILE = os.path.join(CONFIG_DIR, ".upstox-token.json")
 ENV_FILE = os.path.join(CONFIG_DIR, ".env")
-LEGACY_HOME_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".rtmcp")
+LEGACY_HOME_CONFIG_DIR = os.path.join(os.path.expanduser("~"), ".tbmcp")
 
 PORTABLE_ENV_FILE = os.path.join(APP_DIR, ".env")
 
@@ -99,7 +99,7 @@ def write_env_file(api_key: str, api_secret: str, redirect_uri: str = "") -> Non
 
 
 def resolve_token_read_path() -> str:
-    """Where to READ the token: portable config dir, then legacy ~/.rtmcp, then cwd."""
+    """Where to READ the token: portable config dir, then legacy ~/.tbmcp, then cwd."""
     if os.path.exists(TOKEN_FILE):
         return TOKEN_FILE
     legacy = os.path.join(LEGACY_HOME_CONFIG_DIR, ".upstox-token.json")

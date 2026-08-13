@@ -26,7 +26,7 @@ variables override the file.
 | `UPSTOX_API_KEY` | Upstox API key |
 | `UPSTOX_API_SECRET` | Upstox API secret |
 | `UPSTOX_REDIRECT_URI` | OAuth redirect URI (default `http://127.0.0.1:8888/upstox/callback`) |
-| `RTMCP_PROVIDER` | Data provider to use (default `upstox`; the switch point for future brokers) |
+| `TBMCP_PROVIDER` | Data provider to use (default `upstox`; the switch point for future brokers) |
 | `UPSTOX_RATE_LIMIT_GAP_MS` | Throttle between Upstox calls (default `250`) |
 
 The OAuth token is saved to `.upstox-token.json` in the same folder. Both files
@@ -58,4 +58,4 @@ The dashboard listens on `http://127.0.0.1:8888` by default.
 - `config.py` resolves paths portably: everything lives next to the app so the
   folder is fully portable (copy it anywhere). When frozen, the "app folder" is
   the directory holding the `.exe`.
-- A legacy `~/.rtmcp` token location is still honored on read as a fallback.
+- A legacy `~/.tbmcp` token location is still honored on read as a fallback.

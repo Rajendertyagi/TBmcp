@@ -118,33 +118,33 @@ class TestFormatting:
         assert render._fmt(1234.567, 4) == "1,234.5670"
 
     @pytest.mark.parametrize("value,expected", [
-        (1.0, "rtmcp-up"),
-        (-1.0, "rtmcp-down"),
-        (0.0, "rtmcp-flat"),
+        (1.0, "tbmcp-up"),
+        (-1.0, "tbmcp-down"),
+        (0.0, "tbmcp-flat"),
     ])
     def test_change_class(self, value, expected):
         assert render._change_class(value) == expected
 
     def test_pct_cell_marks_positive_change(self):
         cell = render._pct_cell(1.5)
-        assert "rtmcp-up" in cell
+        assert "tbmcp-up" in cell
         assert "1.50%" in cell
 
     def test_pct_cell_none_is_flat_dash(self):
         cell = render._pct_cell(None)
-        assert "rtmcp-flat" in cell
+        assert "tbmcp-flat" in cell
         assert "-%" in cell
 
     def test_buildup_cell_slugs_the_tag(self):
         cell = render._buildup_cell("Short Buildup")
-        assert "rtmcp-build-short-buildup" in cell
+        assert "tbmcp-build-short-buildup" in cell
 
 
 # --- render.render_chain ----------------------------------------------------
 class TestRenderChain:
     def test_full_chain_has_table_header_and_all_rows(self, chain):
         html = render.render_chain(chain)  # 11 strikes
-        assert "rtmcp-table rtmcp-symmetrical" in html
+        assert "tbmcp-table tbmcp-symmetrical" in html
         assert html.count("<tr") == 12  # 1 header + 11 rows
         assert "Strike" in html and "PCR" in html
 
@@ -155,17 +155,17 @@ class TestRenderChain:
 
     def test_buildup_cells_carry_slug_class(self, chain):
         html = render.render_chain(chain)
-        assert "rtmcp-build-neutral" in html          # default tag from _leg()
+        assert "tbmcp-build-neutral" in html          # default tag from _leg()
 
     def test_empty_chain_renders_empty_state(self):
         html = render.render_chain({"rows": []})
-        assert "rtmcp-empty-state" in html
+        assert "tbmcp-empty-state" in html
         assert "No Data Available" in html
 
     def test_missing_leg_renders_placeholders(self, chain):
         chain["rows"][0]["CE"] = None
         html = render.render_chain(chain)
-        assert "rtmcp-empty" in html
+        assert "tbmcp-empty" in html
 
 
 class TestChainCss:
@@ -173,7 +173,7 @@ class TestChainCss:
         css = render.chain_css()
         for tag in BUILDUP_COLORS:
             slug = tag.strip().lower().replace(" ", "-")
-            assert f".rtmcp-build-{slug}" in css
+            assert f".tbmcp-build-{slug}" in css
 
     def test_css_mentions_no_inline_styles(self):
         # The whole point of chain_css: class-driven colours, not inline styles.

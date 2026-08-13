@@ -10,7 +10,7 @@ suite** that hits the real Upstox broker.
 |---|---|---|---|
 | Unit | `tests/unit/` | No | `python -m pytest tests/unit` |
 | Integration | `tests/integration/` | No | `python -m pytest tests/integration` |
-| Live (gated) | `tests/live/` | Yes | `RTMCP_RUN_LIVE=1 python -m pytest tests/live -m live` |
+| Live (gated) | `tests/live/` | Yes | `TBMCP_RUN_LIVE=1 python -m pytest tests/live -m live` |
 
 `pyproject.toml` sets `testpaths = ["tests/unit", "tests/integration"]`, so a
 bare `python -m pytest` runs only the offline suites and never touches the
@@ -63,11 +63,11 @@ real layers above it with zero network:
 
 ### `tests/live/` — opt-in, real broker
 
-Gated with `pytest.mark.live` and skipped unless `RTMCP_RUN_LIVE=1` is set with
+Gated with `pytest.mark.live` and skipped unless `TBMCP_RUN_LIVE=1` is set with
 valid Upstox credentials:
 
 ```bash
-$env:RTMCP_RUN_LIVE = "1"
+$env:TBMCP_RUN_LIVE = "1"
 python -m pytest tests/live -m live
 ```
 

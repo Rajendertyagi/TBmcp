@@ -3,7 +3,7 @@
 These tests hit the real Upstox API and require a working token, so they are
 skipped unless the operator explicitly opts in:
 
-    $env:RTMCP_RUN_LIVE = "1"
+    $env:TBMCP_RUN_LIVE = "1"
     .venv/Scripts/python -m pytest tests/live -m live
 
 The production batch runner (:func:`services.tools_runner.run_all_tools`) is
@@ -20,8 +20,8 @@ import pytest
 pytestmark = [
     pytest.mark.live,
     pytest.mark.skipif(
-        os.environ.get("RTMCP_RUN_LIVE") != "1",
-        reason="live Upstox tests: set RTMCP_RUN_LIVE=1 with valid credentials",
+        os.environ.get("TBMCP_RUN_LIVE") != "1",
+        reason="live Upstox tests: set TBMCP_RUN_LIVE=1 with valid credentials",
     ),
 ]
 

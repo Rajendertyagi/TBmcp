@@ -36,7 +36,7 @@ export function initRouter(opts) {
   tabsEl = opts.tabs;
   renderTabs();
   tabsEl.addEventListener("click", function (e) {
-    var t = e.target.closest(".rtmcp-tab");
+    var t = e.target.closest(".tbmcp-tab");
     if (t) navigate(t.dataset.page);
   });
 }
@@ -46,7 +46,7 @@ function renderTabs() {
     return routeMap.get(k).showTab;
   }).map(function (k) {
     var r = routeMap.get(k);
-    return '<div class="rtmcp-tab" data-page="' + k + '">' + r.label + "</div>";
+    return '<div class="tbmcp-tab" data-page="' + k + '">' + r.label + "</div>";
   }).join("");
 }
 
@@ -70,7 +70,7 @@ export function navigate(key) {
   });
 
   // Highlight the active tab.
-  tabsEl.querySelectorAll(".rtmcp-tab").forEach(function (t) {
+  tabsEl.querySelectorAll(".tbmcp-tab").forEach(function (t) {
     t.classList.toggle("active", t.dataset.page === key);
   });
 

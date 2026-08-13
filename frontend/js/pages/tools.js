@@ -43,27 +43,27 @@ var KNOWN_SYMBOLS = INDEX_SYMBOLS.concat(STOCK_SYMBOLS);
 export function createToolsPage() {
   function html() {
     var opts = KNOWN_SYMBOLS.map(function (s) {
-      return '<li class="rtmcp-combo-opt" data-sym="' + s + '">' + s + "</li>";
+      return '<li class="tbmcp-combo-opt" data-sym="' + s + '">' + s + "</li>";
     }).join("");
     return (
-      '<div class="rtmcp-controls-bar">' +
-      '<div class="rtmcp-combo">' +
-      '<input type="text" id="tools-sym" class="rtmcp-input" value="NIFTY" placeholder="Symbol (e.g. NIFTY)" autocomplete="off">' +
-      '<ul class="rtmcp-combo-list" id="tools-sym-list">' + opts + "</ul>" +
+      '<div class="tbmcp-controls-bar">' +
+      '<div class="tbmcp-combo">' +
+      '<input type="text" id="tools-sym" class="tbmcp-input" value="NIFTY" placeholder="Symbol (e.g. NIFTY)" autocomplete="off">' +
+      '<ul class="tbmcp-combo-list" id="tools-sym-list">' + opts + "</ul>" +
       "</div>" +
       '<button id="tools-run">Run All Tests</button>' +
       "</div>" +
-      '<div class="rtmcp-status" id="tools-status"></div>' +
-      '<div class="rtmcp-tools-summary" id="tools-summary"></div>' +
-      '<div class="rtmcp-tools-grid" id="tools-results"></div>'
+      '<div class="tbmcp-status" id="tools-status"></div>' +
+      '<div class="tbmcp-tools-summary" id="tools-summary"></div>' +
+      '<div class="tbmcp-tools-grid" id="tools-results"></div>'
     );
   }
 
   function renderCard(name, entry) {
     var ok = entry && entry.ok;
     var badge = ok
-      ? '<span class="rtmcp-badge ok">OK</span>'
-      : '<span class="rtmcp-badge err">ERROR</span>';
+      ? '<span class="tbmcp-badge ok">OK</span>'
+      : '<span class="tbmcp-badge err">ERROR</span>';
     var body;
     if (ok) {
       try {
@@ -75,10 +75,10 @@ export function createToolsPage() {
       body = entry && entry.error ? String(entry.error) : "no result";
     }
     return (
-      '<div class="rtmcp-tool-card">' +
-      '<div class="rtmcp-tool-head"><span class="rtmcp-tool-name">' +
+      '<div class="tbmcp-tool-card">' +
+      '<div class="tbmcp-tool-head"><span class="tbmcp-tool-name">' +
       escapeHtml(name) + "</span>" + badge + "</div>" +
-      '<pre class="rtmcp-json">' + escapeHtml(body) + "</pre>" +
+      '<pre class="tbmcp-json">' + escapeHtml(body) + "</pre>" +
       "</div>"
     );
   }
@@ -94,7 +94,7 @@ export function createToolsPage() {
   function renderComboOptions(filter) {
     var list = el("tools-sym-list");
     var f = (filter || "").trim().toUpperCase();
-    var items = list.querySelectorAll(".rtmcp-combo-opt");
+    var items = list.querySelectorAll(".tbmcp-combo-opt");
     items.forEach(function (li) {
       var show = !f || li.getAttribute("data-sym").indexOf(f) !== -1;
       li.style.display = show ? "" : "none";
@@ -119,14 +119,14 @@ export function createToolsPage() {
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         if (list.classList.contains("open")) {
-          var first = list.querySelector('.rtmcp-combo-opt:not([style*="display: none"])');
+          var first = list.querySelector('.tbmcp-combo-opt:not([style*="display: none"])');
           if (first) { input.value = first.getAttribute("data-sym"); closeCombo(); }
         }
         run();
       }
     });
     list.addEventListener("mousedown", function (e) {
-      var li = e.target.closest(".rtmcp-combo-opt");
+      var li = e.target.closest(".tbmcp-combo-opt");
       if (!li) return;
       e.preventDefault();
       input.value = li.getAttribute("data-sym");
@@ -145,13 +145,13 @@ export function createToolsPage() {
     var summary = el("tools-summary");
     var results = el("tools-results");
     status.textContent = "Running all tools for " + sym + " …";
-    status.className = "rtmcp-status";
+    status.className = "tbmcp-status";
     summary.textContent = "";
     results.innerHTML = "";
     api.testAll(sym).then(function (res) {
       if (!res.ok || (res.body && res.body.error)) {
         status.textContent = "Request failed: " + ((res.body && res.body.error) || ("HTTP " + res.status));
-        status.className = "rtmcp-status err";
+        status.className = "tbmcp-status err";
         return;
       }
       var b = res.body || {};
@@ -168,15 +168,15 @@ export function createToolsPage() {
         results.insertAdjacentHTML("beforeend", renderCard(name, r[name]));
       });
       summary.innerHTML =
-        '<span class="rtmcp-pill ok">' + passed + " passed</span>" +
-        '<span class="rtmcp-pill err">' + failed + " failed</span>" +
-        (b.expiry ? '<span class="rtmcp-pill">expiry ' + escapeHtml(b.expiry) + "</span>" : "") +
-        '<span class="rtmcp-pill">date ' + escapeHtml(b.date || "") + "</span>";
+        '<span class="tbmcp-pill ok">' + passed + " passed</span>" +
+        '<span class="tbmcp-pill err">' + failed + " failed</span>" +
+        (b.expiry ? '<span class="tbmcp-pill">expiry ' + escapeHtml(b.expiry) + "</span>" : "") +
+        '<span class="tbmcp-pill">date ' + escapeHtml(b.date || "") + "</span>";
       status.textContent = "Done for " + sym + ".";
-      status.className = "rtmcp-status ok";
+      status.className = "tbmcp-status ok";
     }).catch(function (e) {
       status.textContent = "Error: " + String(e);
-      status.className = "rtmcp-status err";
+      status.className = "tbmcp-status err";
     });
   }
 

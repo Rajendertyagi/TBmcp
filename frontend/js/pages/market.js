@@ -11,17 +11,17 @@ import { drawCandles } from "../components/chart.js";
 import { AUTO_REFRESH_MS, LWC_CHART_HEIGHT, HISTORY_DAYS } from "../utils/config.js";
 
 // Wire an always-visible horizontal scrollbar (proxy) under the chain table.
-// The .rtmcp-card is the vertical+horizontal scroll container (which keeps the
+// The .tbmcp-card is the vertical+horizontal scroll container (which keeps the
 // sticky header working), but its native horizontal scrollbar is buried at the
 // bottom of a tall card. This proxy sits right under the table and stays in sync.
 function setupHScroll(container) {
-  var card = container.querySelector(".rtmcp-card");
+  var card = container.querySelector(".tbmcp-card");
   if (!card) return;
-  var old = container.querySelector(".rtmcp-hscroll");
+  var old = container.querySelector(".tbmcp-hscroll");
   if (old) old.parentNode.removeChild(old);
 
   var proxy = document.createElement("div");
-  proxy.className = "rtmcp-hscroll";
+  proxy.className = "tbmcp-hscroll";
   var spacer = document.createElement("div");
   proxy.appendChild(spacer);
   card.parentNode.insertBefore(proxy, card.nextSibling);
@@ -58,13 +58,13 @@ export function createMarketPage(symbol) {
     var opts = intervalOptions("day");
     var cols = columnsOptions(2);
     return (
-      '<div class="rtmcp-controls-bar">' +
-      '<select id="sym-' + symbol + '" class="rtmcp-select rtmcp-sel-sym">' +
+      '<div class="tbmcp-controls-bar">' +
+      '<select id="sym-' + symbol + '" class="tbmcp-select tbmcp-sel-sym">' +
       indicesOptions(symbol) + "</select>" +
-      '<select id="exp-' + symbol + '" class="rtmcp-select"></select>' +
-      '<label class="rtmcp-autorefresh">' +
+      '<select id="exp-' + symbol + '" class="tbmcp-select"></select>' +
+      '<label class="tbmcp-autorefresh">' +
       '<input type="checkbox" id="auto-' + symbol + '"> Auto-refresh (30s)</label>' +
-      '<div class="rtmcp-stats-inline">' +
+      '<div class="tbmcp-stats-inline">' +
       statChip("Spot", "spot-" + symbol) +
       statChip("PCR", "pcr-" + symbol) +
       statChip("CE OI", "ceoi-" + symbol) +
@@ -72,17 +72,17 @@ export function createMarketPage(symbol) {
       statChip("Expiry", "expiry-" + symbol) +
       "</div>" +
       "</div>" +
-      '<div class="rtmcp-status" id="status-' + symbol + '"></div>' +
-      '<div class="rtmcp-chain" id="chain-' + symbol + '"></div>' +
-      '<div class="rtmcp-divider"></div>' +
-      '<div class="rtmcp-chart-controls">' +
-      '<input type="text" id="chartsym-' + symbol + '" class="rtmcp-input rtmcp-in-chart" value="' + symbol +
+      '<div class="tbmcp-status" id="status-' + symbol + '"></div>' +
+      '<div class="tbmcp-chain" id="chain-' + symbol + '"></div>' +
+      '<div class="tbmcp-divider"></div>' +
+      '<div class="tbmcp-chart-controls">' +
+      '<input type="text" id="chartsym-' + symbol + '" class="tbmcp-input tbmcp-in-chart" value="' + symbol +
       '" placeholder="Chart symbols (comma separated)">' +
-      '<select id="chartint-' + symbol + '" class="rtmcp-select">' + opts + "</select>" +
-      '<select id="chartcols-' + symbol + '" class="rtmcp-select">' + cols + "</select>" +
+      '<select id="chartint-' + symbol + '" class="tbmcp-select">' + opts + "</select>" +
+      '<select id="chartcols-' + symbol + '" class="tbmcp-select">' + cols + "</select>" +
       '<button id="chartbtn-' + symbol + '">Update Charts</button>' +
       "</div>" +
-      '<div class="rtmcp-chart-grid" id="chartgrid-' + symbol + '"></div>'
+      '<div class="tbmcp-chart-grid" id="chartgrid-' + symbol + '"></div>'
     );
   }
 

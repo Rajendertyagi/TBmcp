@@ -1,4 +1,4 @@
-# Plan: Dual HTTP Server + Framework Options for RTMCP
+# Plan: Dual HTTP Server + Framework Options for TBMCP
 
 ## Current State
 
@@ -82,17 +82,17 @@ python main.py all
 
 ### Files to Create
 ```
-rtmcp-py/
+tbmcp-py/
 ├── server.py          # NEW: Flask app with routes
 ├── templates/
-│   └── index.html     # NEW: Dashboard HTML (reuse rtmcp.css)
+│   └── index.html     # NEW: Dashboard HTML (reuse tbmcp.css)
 ├── static/
 │   └── js/
 │       └── dashboard.js  # NEW: Frontend fetch logic
 ├── ui.py              # DEPRECATED: Remove NiceGUI code
 ├── render.py          # UNCHANGED
 ├── charts.py          # UNCHANGED
-└── rtmcp.css          # UNCHANGED (1493 lines)
+└── tbmcp.css          # UNCHANGED (1493 lines)
 ```
 
 ### Key Routes

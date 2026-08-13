@@ -1,6 +1,6 @@
 # TBMCP — Documentation
 
-**TBMCP** (project name `rtmcp`) is a personal Indian stock-market application: an
+**TBMCP** (project name `tbmcp`) is a personal Indian stock-market application: an
 **MCP server** that lets AI agents query live market data, plus a **web
 dashboard** for a human. Both read the same data from the **Upstox** broker
 through one shared data layer.

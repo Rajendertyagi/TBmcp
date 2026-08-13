@@ -18,7 +18,7 @@ server + web dashboard) in phases. Earlier phases (already done):
 
 ## Phase 4 (just completed): flat modules → packages
 
-`rtmcp` was a flat set of modules; this phase split them into packages so each
+`tbmcp` was a flat set of modules; this phase split them into packages so each
 layer (provider / analytics / API / MCP / services) is independently importable
 and testable. **Nothing is committed yet.**
 
@@ -96,7 +96,7 @@ from what the Read tool displayed (e.g. dashboard.py). Therefore:
 
 - [ ] Commit the Phase 4/5 changes (repo currently has many `D`/`M`/`??` entries;
       also `.upstox-token.json` is untracked — do **not** commit secrets).
-- [x] Repo restructure: `rtmcp-py` renamed to `rtmcp`, then the app was flattened to
+- [x] Repo restructure: `tbmcp-py` renamed to `tbmcp`, then the app was flattened to
       the repo root; the engine is now a self-contained project at `zeromcp/`
       (own pyproject/README/tests/examples/CI).
 - [x] Phase 5 — File Responsibility Rule: recorded as a project convention in
@@ -107,7 +107,7 @@ from what the Read tool displayed (e.g. dashboard.py). Therefore:
       modules (`technical`, `fundamentals`, `screening`, `portfolio`) to be created
       only when those categories grow; tool names must stay stable.
 - [ ] `PLAN_*.md` (now in `docs/`) still reference old flat module names (`mcp_server`,
-      `dashboard.py`, `tools_runner`, `client`) and the old `rtmcp-py/` path — update or leave.
+      `dashboard.py`, `tools_runner`, `client`) and the old `tbmcp-py/` path — update or leave.
 - [ ] `tests/unit`, `tests/integration`, `tests/live` dirs exist but appear empty;
       decide whether to add package-path-aware tests.
 - [ ] Optionally verify a real `python main.py mcp` stdio round-trip (needs a live

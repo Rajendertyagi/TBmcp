@@ -1,4 +1,4 @@
-"""Data-provider contract for RTMCP.
+"""Data-provider contract for TBMCP.
 
 The AI tools (`mcp.server`) and the web API (`api.app`) depend ONLY on the
 `DataProvider` contract below - never on a concrete broker. Today the only

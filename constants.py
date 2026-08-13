@@ -1,4 +1,4 @@
-"""Static configuration constants for RTMCP.
+"""Static configuration constants for TBMCP.
 
 Every magic value (URLs, timeouts, instrument keys, lot sizes, colours, UI
 defaults) lives here so nothing is hardcoded at the point of use. Import these
@@ -164,5 +164,5 @@ FUNDAMENTAL_COMPETITORS: Final[str] = "/competitors"
 NEWS_PATH: Final[str] = "/news"
 
 # --- Active data provider (single switch point for future brokers) ------------
-PROVIDER_ENV: Final[str] = "RTMCP_PROVIDER"
+PROVIDER_ENV: Final[str] = "TBMCP_PROVIDER"
 DEFAULT_PROVIDER: Final[str] = "upstox"

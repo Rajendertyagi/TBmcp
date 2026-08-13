@@ -13,26 +13,26 @@ var DEFAULT_REDIRECT_URI = "http://127.0.0.1:8888/upstox/callback";
 export function createUpstoxPage() {
   function mount(container) {
     container.innerHTML =
-      '<div class="rtmcp-setup">' +
-      '<div class="rtmcp-setup-title">Upstox API Setup</div>' +
+      '<div class="tbmcp-setup">' +
+      '<div class="tbmcp-setup-title">Upstox API Setup</div>' +
       '<div class="flex items-center gap-4" style="flex-wrap:wrap;">' +
-      '<input id="apikey" placeholder="API Key" class="rtmcp-input" style="max-width:280px;">' +
-      '<input id="apisecret" type="password" placeholder="API Secret" class="rtmcp-input" style="max-width:280px;">' +
-      '<input id="redirect" placeholder="Redirect URI" class="rtmcp-input" style="max-width:380px;">' +
+      '<input id="apikey" placeholder="API Key" class="tbmcp-input" style="max-width:280px;">' +
+      '<input id="apisecret" type="password" placeholder="API Secret" class="tbmcp-input" style="max-width:280px;">' +
+      '<input id="redirect" placeholder="Redirect URI" class="tbmcp-input" style="max-width:380px;">' +
       '<button id="saveCreds">Save</button>' +
       "</div>" +
-      '<div class="rtmcp-status" id="setupStatus"></div>' +
+      '<div class="tbmcp-status" id="setupStatus"></div>' +
       "</div>" +
-      '<div class="rtmcp-divider"></div>' +
-      '<div class="rtmcp-setup">' +
-      '<div class="rtmcp-setup-title">Connect / Re-login to Upstox</div>' +
+      '<div class="tbmcp-divider"></div>' +
+      '<div class="tbmcp-setup">' +
+      '<div class="tbmcp-setup-title">Connect / Re-login to Upstox</div>' +
       '<div class="flex items-center gap-4" style="flex-wrap:wrap;">' +
       '<button id="getLogin">Get Login Link</button>' +
       '<span id="loginLink"></span>' +
       "</div>" +
-      '<div class="rtmcp-status" id="loginStatus"></div>' +
+      '<div class="tbmcp-status" id="loginStatus"></div>' +
       '<div class="flex items-center gap-4" style="margin-top:10px;flex-wrap:wrap;">' +
-      '<input id="code" placeholder="Paste the \'code\' from redirect URL" class="rtmcp-input" style="max-width:380px;">' +
+      '<input id="code" placeholder="Paste the \'code\' from redirect URL" class="tbmcp-input" style="max-width:380px;">' +
       '<button id="completeLogin">Complete Login</button>' +
       "</div>" +
       "</div>";

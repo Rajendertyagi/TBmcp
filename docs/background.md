@@ -6,9 +6,9 @@ technical design see [architecture.md](architecture.md).
 
 ## Where it came from
 
-We originally built **RTMCP** — a TypeScript MCP server forked from
+We originally built **TBMCP** — a TypeScript MCP server forked from
 `devag7/Indian-Option-MCP`, later extended with an NSE data kit and Upstox
-support. We decided **not to use RTMCP** and retired it. (Its GitHub repo
+support. We decided **not to use TBMCP** and retired it. (Its GitHub repo
 `github.com/Rajendertyagi/RTMCP` still exists and is pending deletion.)
 
 **TBMCP** is the fresh Python replacement, built for two reasons:

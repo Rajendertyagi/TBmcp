@@ -19,7 +19,7 @@ python -m nuitka --onefile \
 
 ## What it produces
 
-- A standalone `rtmcp.exe` containing the Python runtime, the app, the falcon /
+- A standalone `TBMcp.exe` containing the Python runtime, the app, the falcon /
   waitress / requests packages, the `zeromcp` engine package, and the
   `frontend/` static files.
 - Configuration (`config.py`) is portable by design: when frozen, the "app

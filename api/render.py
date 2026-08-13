@@ -29,68 +29,68 @@ def _fmt(value: Any, decimals: int = 2) -> str:
 def _change_class(value: float) -> str:
     """CSS class for a signed number (gain / loss / flat)."""
     if value > 0:
-        return "rtmcp-up"
+        return "tbmcp-up"
     if value < 0:
-        return "rtmcp-down"
-    return "rtmcp-flat"
+        return "tbmcp-down"
+    return "tbmcp-flat"
 
 
 def _buildup_class(tag: str) -> str:
     """CSS class that carries a buildup tag's colour (defined in chain_css)."""
     slug = tag.strip().lower().replace(" ", "-")
-    return f"rtmcp-build rtmcp-build-{slug}"
+    return f"tbmcp-build tbmcp-build-{slug}"
 
 
 def _greek_cell(value: Any, decimals: int = 4) -> str:
     """Render a Greek value cell with semantic class."""
-    return f"<td class='rtmcp-cell-greek'>{_fmt(value, decimals)}</td>"
+    return f"<td class='tbmcp-cell-greek'>{_fmt(value, decimals)}</td>"
 
 
 def _iv_cell(value: Any) -> str:
     """Render IV cell with semantic class."""
-    return f"<td class='rtmcp-cell-iv'>{_fmt(value, 2)}</td>"
+    return f"<td class='tbmcp-cell-iv'>{_fmt(value, 2)}</td>"
 
 
 def _pct_cell(value: Any) -> str:
     """Render percentage cell with semantic class and color."""
     cls = _change_class(value if isinstance(value, (int, float)) else 0)
-    return f"<td class='rtmcp-cell-pct {cls}'>{_fmt(value, 2)}%</td>"
+    return f"<td class='tbmcp-cell-pct {cls}'>{_fmt(value, 2)}%</td>"
 
 
 def _volume_cell(value: Any) -> str:
     """Render volume cell with semantic class."""
-    return f"<td class='rtmcp-cell-volume'>{_fmt(value, 0)}</td>"
+    return f"<td class='tbmcp-cell-volume'>{_fmt(value, 0)}</td>"
 
 
 def _oi_cell(value: Any) -> str:
     """Render OI cell with semantic class."""
-    return f"<td class='rtmcp-cell-oi'>{_fmt(value, 0)}</td>"
+    return f"<td class='tbmcp-cell-oi'>{_fmt(value, 0)}</td>"
 
 
 def _ltp_cell(value: Any) -> str:
     """Render LTP cell with semantic class."""
-    return f"<td class='rtmcp-cell-ltp'>{_fmt(value, 2)}</td>"
+    return f"<td class='tbmcp-cell-ltp'>{_fmt(value, 2)}</td>"
 
 
 def _bid_ask_cells(leg: dict) -> list[str]:
     """Return list of bid/ask cell strings."""
     return [
-        f"<td class='rtmcp-cell-bid-ask'>{leg.get('bidQty', 0)}</td>",
-        f"<td class='rtmcp-cell-bid-ask'>{_fmt(leg.get('bidPrice', 0), 2)}</td>",
-        f"<td class='rtmcp-cell-bid-ask'>{_fmt(leg.get('askPrice', 0), 2)}</td>",
-        f"<td class='rtmcp-cell-bid-ask'>{leg.get('askQty', 0)}</td>",
+        f"<td class='tbmcp-cell-bid-ask'>{leg.get('bidQty', 0)}</td>",
+        f"<td class='tbmcp-cell-bid-ask'>{_fmt(leg.get('bidPrice', 0), 2)}</td>",
+        f"<td class='tbmcp-cell-bid-ask'>{_fmt(leg.get('askPrice', 0), 2)}</td>",
+        f"<td class='tbmcp-cell-bid-ask'>{leg.get('askQty', 0)}</td>",
     ]
 
 
 def _buildup_cell(tag: str) -> str:
     """Render buildup cell with semantic class."""
-    return f"<td class='rtmcp-cell-buildup {_buildup_class(tag)}'>{tag}</td>"
+    return f"<td class='tbmcp-cell-buildup {_buildup_class(tag)}'>{tag}</td>"
 
 
 def _leg_cells(leg: Optional[dict[str, Any]]) -> str:
     """CALLS side cells (Left → Center): Buildup, Greeks, IV, Vol%, Volume, OI, LTP%, LTP, Bid/Ask."""
     if not leg:
-        return "<td class='rtmcp-empty'>-</td>" * 14
+        return "<td class='tbmcp-empty'>-</td>" * 14
     
     cells = [
         _buildup_cell(leg['buildTag']),
@@ -112,7 +112,7 @@ def _leg_cells(leg: Optional[dict[str, Any]]) -> str:
 def _put_cells(leg: Optional[dict[str, Any]]) -> str:
     """PUTS side cells (Center → Right): Ask/Bid, LTP, LTP%, OI, Volume, Vol%, IV, Greeks, Buildup."""
     if not leg:
-        return "<td class='rtmcp-empty'>-</td>" * 14
+        return "<td class='tbmcp-empty'>-</td>" * 14
     
     cells = list(reversed(_bid_ask_cells(leg)))
     cells.extend([
@@ -136,7 +136,7 @@ def _buildup_css_rules() -> str:
     rules = []
     for tag, color in BUILDUP_COLORS.items():
         slug = tag.strip().lower().replace(" ", "-")
-        rules.append(f".rtmcp-build-{slug} {{ background:{color}; color:#ffffff; }}")
+        rules.append(f".tbmcp-build-{slug} {{ background:{color}; color:#ffffff; }}")
     return "\n".join(rules)
 
 
@@ -155,7 +155,7 @@ def render_chain(chain: dict[str, Any]) -> str:
     """Render the full symmetrical option-chain table as HTML."""
     rows = chain.get("rows", [])
     if not rows:
-        return '''<div class="rtmcp-empty-state">
+        return '''<div class="tbmcp-empty-state">
             <div class="icon">📊</div>
             <h3>No Data Available</h3>
             <p>Select a symbol and expiry to view the option chain</p>
@@ -175,57 +175,57 @@ def render_chain(chain: dict[str, Any]) -> str:
         rows_html.append(
             "<tr>"
             + _leg_cells(ce)
-            + f"<td class='rtmcp-cell-strike'>{_fmt(strike, 0)}</td>"
-            + f"<td class='rtmcp-cell-pcr'>{_fmt(pcr, 2)}</td>"
+            + f"<td class='tbmcp-cell-strike'>{_fmt(strike, 0)}</td>"
+            + f"<td class='tbmcp-cell-pcr'>{_fmt(pcr, 2)}</td>"
             + _put_cells(pe)
             + "</tr>"
         )
     
     # Symmetrical header: CALLS (14 cols) | Strike | PCR | PUTS (14 cols)
     header = (
-        "<tr class='rtmcp-th'>"
+        "<tr class='tbmcp-th'>"
         # CALLS side (Left → Center)
-        "<th class='rtmcp-cell-buildup'>Buildup</th>"
-        "<th class='rtmcp-cell-greek'>Vega</th>"
-        "<th class='rtmcp-cell-greek'>Theta</th>"
-        "<th class='rtmcp-cell-greek'>Gamma</th>"
-        "<th class='rtmcp-cell-greek'>Delta</th>"
-        "<th class='rtmcp-cell-iv'>IV</th>"
-        "<th class='rtmcp-cell-pct'>Vol%</th>"
-        "<th class='rtmcp-cell-volume'>Volume</th>"
-        "<th class='rtmcp-cell-oi'>OI</th>"
-        "<th class='rtmcp-cell-pct'>LTP%</th>"
-        "<th class='rtmcp-cell-ltp'>LTP</th>"
-        "<th class='rtmcp-cell-bid-ask'>BidQty</th>"
-        "<th class='rtmcp-cell-bid-ask'>BidPrice</th>"
-        "<th class='rtmcp-cell-bid-ask'>AskPrice</th>"
-        "<th class='rtmcp-cell-bid-ask'>AskQty</th>"
+        "<th class='tbmcp-cell-buildup'>Buildup</th>"
+        "<th class='tbmcp-cell-greek'>Vega</th>"
+        "<th class='tbmcp-cell-greek'>Theta</th>"
+        "<th class='tbmcp-cell-greek'>Gamma</th>"
+        "<th class='tbmcp-cell-greek'>Delta</th>"
+        "<th class='tbmcp-cell-iv'>IV</th>"
+        "<th class='tbmcp-cell-pct'>Vol%</th>"
+        "<th class='tbmcp-cell-volume'>Volume</th>"
+        "<th class='tbmcp-cell-oi'>OI</th>"
+        "<th class='tbmcp-cell-pct'>LTP%</th>"
+        "<th class='tbmcp-cell-ltp'>LTP</th>"
+        "<th class='tbmcp-cell-bid-ask'>BidQty</th>"
+        "<th class='tbmcp-cell-bid-ask'>BidPrice</th>"
+        "<th class='tbmcp-cell-bid-ask'>AskPrice</th>"
+        "<th class='tbmcp-cell-bid-ask'>AskQty</th>"
         # Center columns
-        "<th class='rtmcp-cell-strike'>Strike</th>"
-        "<th class='rtmcp-cell-pcr'>PCR</th>"
+        "<th class='tbmcp-cell-strike'>Strike</th>"
+        "<th class='tbmcp-cell-pcr'>PCR</th>"
         # PUTS side (Center → Right)
-        "<th class='rtmcp-cell-bid-ask'>AskQty</th>"
-        "<th class='rtmcp-cell-bid-ask'>AskPrice</th>"
-        "<th class='rtmcp-cell-bid-ask'>BidPrice</th>"
-        "<th class='rtmcp-cell-bid-ask'>BidQty</th>"
-        "<th class='rtmcp-cell-ltp'>LTP</th>"
-        "<th class='rtmcp-cell-pct'>LTP%</th>"
-        "<th class='rtmcp-cell-oi'>OI</th>"
-        "<th class='rtmcp-cell-volume'>Volume</th>"
-        "<th class='rtmcp-cell-pct'>Vol%</th>"
-        "<th class='rtmcp-cell-iv'>IV</th>"
-        "<th class='rtmcp-cell-greek'>Delta</th>"
-        "<th class='rtmcp-cell-greek'>Gamma</th>"
-        "<th class='rtmcp-cell-greek'>Theta</th>"
-        "<th class='rtmcp-cell-greek'>Vega</th>"
-        "<th class='rtmcp-cell-buildup'>Buildup</th>"
+        "<th class='tbmcp-cell-bid-ask'>AskQty</th>"
+        "<th class='tbmcp-cell-bid-ask'>AskPrice</th>"
+        "<th class='tbmcp-cell-bid-ask'>BidPrice</th>"
+        "<th class='tbmcp-cell-bid-ask'>BidQty</th>"
+        "<th class='tbmcp-cell-ltp'>LTP</th>"
+        "<th class='tbmcp-cell-pct'>LTP%</th>"
+        "<th class='tbmcp-cell-oi'>OI</th>"
+        "<th class='tbmcp-cell-volume'>Volume</th>"
+        "<th class='tbmcp-cell-pct'>Vol%</th>"
+        "<th class='tbmcp-cell-iv'>IV</th>"
+        "<th class='tbmcp-cell-greek'>Delta</th>"
+        "<th class='tbmcp-cell-greek'>Gamma</th>"
+        "<th class='tbmcp-cell-greek'>Theta</th>"
+        "<th class='tbmcp-cell-greek'>Vega</th>"
+        "<th class='tbmcp-cell-buildup'>Buildup</th>"
         "</tr>"
     )
     
     return (
-        "<div class='rtmcp-table-wrapper'>"
-        + "<div class='rtmcp-card'>"
-        + "<table class='rtmcp-table rtmcp-symmetrical'>"
+        "<div class='tbmcp-table-wrapper'>"
+        + "<div class='tbmcp-card'>"
+        + "<table class='tbmcp-table tbmcp-symmetrical'>"
         + f"<thead>{header}</thead>"
         + f"<tbody>{''.join(rows_html)}</tbody>"
         + "</table>"

@@ -20,7 +20,7 @@ def isolated_config(monkeypatch, tmp_path):
     monkeypatch.setattr(config_mod, "TOKEN_FILE", str(tmp_path / ".upstox-token.json"))
     monkeypatch.setattr(config_mod, "LEGACY_HOME_CONFIG_DIR", str(tmp_path / "legacy"))
     for var in ("UPSTOX_API_KEY", "UPSTOX_API_SECRET", "UPSTOX_REDIRECT_URI",
-                "UPSTOX_ACCESS_TOKEN", "RTMCP_PROVIDER", "UPSTOX_RATE_LIMIT_GAP_MS"):
+                "UPSTOX_ACCESS_TOKEN", "TBMCP_PROVIDER", "UPSTOX_RATE_LIMIT_GAP_MS"):
         monkeypatch.delenv(var, raising=False)
     return tmp_path
 
@@ -53,7 +53,7 @@ class TestTickerQuoteChainExpiriesHistoryVix:
         resp = api_client.simulate_get("/api/chain", params={"symbol": "NIFTY"})
         assert resp.status_code == 200
         body = resp.json
-        assert "rtmcp-table" in body["html"]
+        assert "tbmcp-table" in body["html"]
         assert body["stats"]["spot"] == 20000.0
         assert body["stats"]["pcr"] == 1.0
         assert body["expiryDate"] == "2025-01-30"
