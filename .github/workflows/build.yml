@@ -18,25 +18,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      # MSVC environment initialization
+      - name: Setup MSVC Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
         with:
-          version: "0.9.3"
-          # Pin Python 3.12: Nuitka's MinGW64 does NOT work on Python 3.13+
-          # (official Nuitka manual), and uv prefers the newest Python.
-          python-version: "3.12"
+          arch: amd64
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.0
+        with:
+          enable-cache: true
+          # UPDATED: Upgraded to Python 3.13 (Nuitka's MinGW64 does NOT work
+          # on Python 3.13+, so we build with the MSVC toolchain instead).
+          python-version: "3.13"
+
+      # Re-creates the venv specifically targeting the new 3.13 runtime
       - name: Create venv
         run: uv sync
 
       - name: Install Nuitka
         run: uv pip install nuitka
 
+      # Compiler cache key updated to isolate 3.13 build objects from 3.12
+      - name: Cache Nuitka compiler build cache
+        uses: actions/cache@v4
+        with:
+          path: ~/AppData/Local/Nuitka/Nuitka
+          key: ${{ runner.os }}-nuitka-3.13-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-nuitka-3.13-
+
+      # Compiling Python 3.13 using the native MSVC toolchain
       - name: Build exe
-        run: uv run python -m nuitka --onefile --mingw64 --assume-yes-for-downloads --include-package=zeromcp --include-data-dir=frontend=frontend --include-package=falcon,waitress,requests --output-filename=TBMcp.exe main.py
+        run: uv run python -m nuitka --onefile --msvc=latest --assume-yes-for-downloads --include-package=zeromcp --include-data-dir=frontend=frontend --include-package=falcon,waitress,requests --output-filename=TBMcp.exe main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TBMcp-exe
           path: TBMcp.exe
+          if-no-files-found: error
