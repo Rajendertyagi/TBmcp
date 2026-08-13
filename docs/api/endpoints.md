@@ -23,7 +23,10 @@ Base URL: `http://127.0.0.1:8888` (default; `--host`/`--port` override).
 | GET | `/api/expiries` | `symbol` (required) | `{"expiries": [...]}` expiry dates for a symbol. |
 | GET | `/api/history` | `symbol` (required), `interval` (default `day`), `days` (default `60`) | `{"candles": [...]}` historical candles. |
 | GET | `/api/vix` | — | Full quote for the India VIX index. |
-| GET | `/api/test-all` | `symbol` (default `NIFTY`) | Runs every market-info / analytics tool once; returns the full batch from `services.tools_runner.run_all_tools`. |
+| GET | `/api/test-all` | `symbol` (default `NIFTY`) | Runs every tool once; returns the full batch from `services.tools_runner.run_all_tools`. |
+| GET | `/api/fundamentals` | `symbol` (required), `endpoint` (required: `company_profile` \| `share_holdings` \| `key_ratios` \| `corporate_actions` \| `competitors`) | Single fundamentals endpoint for a stock by ISIN. Missing params → 400. |
+| GET | `/api/news` | `symbol` (required) | News articles for a symbol (past 7 days). |
+| GET | `/api/greeks` | `symbol` (required), `expiry` (optional) | Live option Greeks (IV, delta, gamma, theta, vega) for all strikes in the chain. |
 
 ## Settings & Upstox login
 

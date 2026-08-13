@@ -125,6 +125,48 @@ class FakeProvider:
                  "name": "Nifty 50", "exchange": exchange, "instrument_type": "I",
                  "segment": "NSE_INDEX", "lot_size": 0}]
 
+    # --- fundamentals / news / greeks ---------------------------------------
+    def resolve_key(self, symbol: str) -> str:
+        # Always an equity key so the batch runner exercises the fundamentals
+        # path. Deliberately does NOT honour `fail`: tools_runner calls it
+        # outside the per-tool try/except, so a raise would abort the batch.
+        return "NSE_EQ|INE000000000"
+
+    def get_company_profile(self, isin: str) -> dict:
+        self._maybe_raise()
+        return {"isin": isin, "name": "Fake Corp", "sector": "Technology"}
+
+    def get_share_holdings(self, isin: str) -> list:
+        self._maybe_raise()
+        return [{"category": "Promoters", "shares": 1000000}]
+
+    def get_key_ratios(self, isin: str) -> list:
+        self._maybe_raise()
+        return [{"ratio": "pe", "value": 20.0}]
+
+    def get_corporate_actions(self, isin: str) -> list:
+        self._maybe_raise()
+        return [{"type": "DIVIDEND", "exDate": "2025-02-14", "amount": 5.0}]
+
+    def get_competitors(self, isin: str, exchange: str = "NSE") -> list:
+        self._maybe_raise()
+        return [{"name": "Peer Corp", "instrument_key": f"{exchange}_EQ|INE000000001"}]
+
+    def get_news(self, instrument_keys: list[str]) -> dict:
+        self._maybe_raise()
+        return {"articles": [{"headline": "test news", "instrument_key": instrument_keys[0]}]}
+
+    def get_option_greeks(self, instrument_keys: list[str]) -> dict:
+        self._maybe_raise()
+        return {
+            k: {"iv": 20.0, "delta": 0.5, "gamma": 0.01, "theta": -0.1, "vega": 0.2}
+            for k in instrument_keys
+        }
+
+    def get_option_greeks_for_symbol(self, symbol: str, expiry_date=None) -> dict:
+        self._maybe_raise()
+        return {"NSE_FO:NIFTY2540923000CE": {"iv": 20.0, "delta": 0.5, "gamma": 0.01}}
+
     # --- auth -----------------------------------------------------------------
     def build_login_url(self, api_key: str, redirect_uri: str, code_challenge=None) -> str:
         return f"https://upstox.test/login?client_id={api_key}&redirect_uri={redirect_uri}"

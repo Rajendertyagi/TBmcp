@@ -15,8 +15,8 @@
 **TBMCP** (Python package name `tbmcp`) is a personal Indian stock-market
 application with **two consumers** that share one data layer:
 
-1. **An AI assistant** — talks to an **MCP server** exposing **35 tools**
-   (raw market data + derived F&O analytics + strategy pricers) over stdio.
+1. **An AI assistant** — talks to an **MCP server** exposing **42 tools**
+   (raw market data + fundamentals/news/Greeks + derived F&O analytics + strategy pricers) over stdio.
 2. **A human** — uses a **web dashboard** (Falcon backend + static HTML/JS SPA)
    served on `http://127.0.0.1:8888`.
 
@@ -38,10 +38,13 @@ TBMCP/                       # git repo root = the app
 ├── models.py                # typed data models (OptionChain, Candle, FuturesChain, ...)
 ├── providers/               # DataProvider abstraction (swap brokers here)
 │   ├── __init__.py          #   create_provider() factory
-│   ├── base.py              #   21-method DataProvider protocol
+│   ├── base.py              #   30-method DataProvider protocol
 │   └── upstox.py            #   UpstoxClient: the Upstox v2/v3 REST adapter
 ├── analytics/               # derived F&O analytics — pure functions over models
 ├── mcp/                     # AI-facing MCP server (server.py + tool modules)
+│   ├── market_data.py       #   19 raw market-data tools (get_*)
+│   ├── fundamentals.py      #   7 fundamentals/news/Greeks tools
+│   └── options.py           #   16 derived/strategy tools (compute_*, price_*)
 ├── api/                     # human-facing Falcon web dashboard
 │   ├── app.py               #   WSGI assembly + helpers
 │   ├── render.py            #   pure HTML rendering for the chain table
@@ -196,6 +199,7 @@ The MCP server is **modular by tool category** with exactly **one shared
 mcp/
 ├── server.py         # assembly only: builds McpServer, injects client, registers TOOLS
 ├── market_data.py    # 19 raw market-data tools (get_*)
+├── fundamentals.py   # 7 fundamentals/news/Greeks tools
 └── options.py        # 16 derived/strategy tools (compute_*, price_*)
 ```
 
@@ -203,7 +207,7 @@ Rules:
 
 1. **One shared instance.** Tool modules expose a `TOOLS` list of plain async
    functions; `server.py` registers them:
-   `for _fn in market_data.TOOLS + options.TOOLS: mcp.tool()(_fn)`.
+   `for _fn in fundamentals.TOOLS + market_data.TOOLS + options.TOOLS: mcp.tool()(_fn)`.
 2. **Stable tool names.** The registered name is the function's `__name__`.
    Moving a tool between modules must **never** rename it.
 3. **Split on category size.** New category modules (`technical.py`,
@@ -211,13 +215,13 @@ Rules:
    category grows — not to match a tree.
 4. **Client injection stays internal.** `server.py` sets `module._client = client`.
 
-All 35 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
+All 42 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
 
 ---
 
 ## 9. Provider architecture
 
-- `providers/base.py` defines the **`DataProvider` protocol** (21 methods) —
+- `providers/base.py` defines the **`DataProvider` protocol** (30 methods) —
   the contract every data source must implement.
 - `providers/upstox.py` is the **`UpstoxClient`** adapter (the only provider).
 - `providers/__init__.py` exports `create_provider(settings)` — the **single
@@ -276,7 +280,7 @@ Three suites:
   pricers). Offline, runs in CI.
 - **Integration** (`tests/integration/`) — the layers above the broker, driven
   by an in-memory `FakeProvider` (`tests/integration/conftest.py`): provider
-  factory, the **35-tool MCP inventory contract**, every Falcon route (happy +
+  factory, the **42-tool MCP inventory contract**, every Falcon route (happy +
   error paths), and the `run_all_tools()` batch. Offline, runs in CI.
 - **Live** (`tests/live/`) — opt-in against the real Upstox API, gated by
   `pytest.mark.live` and `TBMCP_RUN_LIVE=1`. Never runs in CI.
@@ -285,7 +289,7 @@ Rules:
 
 - A bare `python -m pytest` runs only unit + integration (set by
   `pyproject.toml` `testpaths`), so CI never touches the broker.
-- **The 35 MCP tool names are a stable contract** — `tests/integration/
+- **The 42 MCP tool names are a stable contract** — `tests/integration/
   test_mcp_server.py` asserts the exact inventory. After any MCP refactor, run
   it (or `python -c "import mcp.server as s; print(sorted(s.mcp.tools.methods))"`).
 - CI (`.github/workflows/ci.yml`) runs: compileall syntax check, `main.py --help`
@@ -309,7 +313,9 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
   (portable folder).
 - Keep include flags in sync with `pyproject.toml` dependencies.
 - `main.py` calls `multiprocessing.freeze_support()` for `both` mode under the
-  frozen binary — don't remove it.
+  frozen binary — don't remove it. Note: `--reload` is available for dev but
+  not passed through to the child process in `both` mode (set explicitly when
+  running `python main.py ui --reload`).
 
 ---
 
@@ -350,7 +356,7 @@ History: [`docs/background.md`](docs/background.md).
 
 These are load-bearing. Change only with an explicit, deliberate decision:
 
-1. **MCP tool names** — the 35 registered names are a stable contract for
+1. **MCP tool names** — the 42 registered names are a stable contract for
    existing AI clients. Internal refactoring must never rename a tool.
 2. **The `DataProvider` abstraction** — do not bypass `providers/base.py` to call
    Upstox directly "because it's easier." A broker swap must require no tool/UI
@@ -378,7 +384,7 @@ These are load-bearing. Change only with an explicit, deliberate decision:
 | Product | [`docs/product.md`](docs/product.md) |
 | Architecture & rules | [`docs/architecture.md`](docs/architecture.md) |
 | HTTP endpoints | [`docs/api/endpoints.md`](docs/api/endpoints.md) |
-| MCP tools (35) | [`docs/mcp/tools.md`](docs/mcp/tools.md) |
+| MCP tools (42) | [`docs/mcp/tools.md`](docs/mcp/tools.md) |
 | Frontend | [`docs/frontend/guide.md`](docs/frontend/guide.md) |
 | Local setup/run | [`docs/development/local.md`](docs/development/local.md) |
 | Testing | [`docs/testing/README.md`](docs/testing/README.md) |

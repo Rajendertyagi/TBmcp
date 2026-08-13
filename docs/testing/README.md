@@ -28,7 +28,7 @@ broker.
   `compute_oi_buildup`, `price_long_straddle`, ...). These are the functions
   both the MCP tools and the Falcon routes call, so a failure here fails both
   consumers.
-- `test_mcp_tools.py` — **all 35 MCP tool functions** run against a recording
+- `test_mcp_tools.py` — **all 42 MCP tool functions** run against a recording
   stub client: every tool returns parseable JSON, options tools fetch the chain
   and return their signature key, and client arguments are forwarded correctly.
   This is the regression test for the old flat-server shadowing bug where every
@@ -49,8 +49,8 @@ real layers above it with zero network:
 
 - `test_provider_factory.py` — `create_provider()` is the single switch point
   (defaults to Upstox, unknown provider raises), and the fake structurally
-  conforms to all 21 `DataProvider` methods.
-- `test_mcp_server.py` — **the 35 registered MCP tool names are a stable
+  conforms to all 30 `DataProvider` methods.
+- `test_mcp_server.py` — **the 42 registered MCP tool names are a stable
   contract** (see AGENTS.md §16.1). A refactor that renames a tool fails this
   suite. This replaces the old inline CI inventory check.
 - `test_api_routes.py` — every Falcon route through a `TestClient`: happy
@@ -106,7 +106,7 @@ check, `python main.py --help` smoke, and the offline pytest suites. The
 vendored engine ships no CI of its own (GitHub only runs root-level workflows;
 the app's tests cover the engine).
 
-## Keeping the 35-tool contract green
+## Keeping the 42-tool contract green
 
 After any MCP refactor, the fastest signal is the integration suite:
 

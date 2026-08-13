@@ -106,6 +106,7 @@ def create_app() -> falcon.App:
     app.add_route("/api/login-status", LoginStatusResource())
     app.add_route("/api/fundamentals", FundamentalsResource())
     app.add_route("/api/news", NewsResource())
+    app.add_route("/api/greeks", OptionGreeksResource())
     return app
 
 def build_app(host: str = DEFAULT_UI_HOST, port: int = DEFAULT_UI_PORT, reload: bool = False) -> None:
@@ -142,6 +143,7 @@ from .routes import (  # noqa: E402
     LoginStatusResource,
     LoginUrlResource,
     NewsResource,
+    OptionGreeksResource,
     QuoteResource,
     SettingsResource,
     TestAllResource,

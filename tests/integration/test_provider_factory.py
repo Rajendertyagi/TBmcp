@@ -9,11 +9,17 @@ from config import Settings
 from tests.integration.conftest import FakeProvider
 
 PROTOCOL_METHODS = [
+    # raw market data
     "get_option_chain", "get_expiry_dates", "get_spot_price", "get_full_quote",
     "get_full_quotes", "get_historical_data", "get_futures_chain",
     "get_market_depth", "get_margin", "get_pcr", "get_max_pain", "get_oi",
     "get_change_oi", "get_fii", "get_dii", "get_market_status",
     "get_market_holidays", "get_market_timings", "get_instruments",
+    # fundamentals / news / greeks
+    "get_company_profile", "get_share_holdings", "get_key_ratios",
+    "get_corporate_actions", "get_competitors", "get_news",
+    "get_option_greeks", "get_option_greeks_for_symbol", "resolve_key",
+    # auth
     "build_login_url", "exchange_code_for_token",
 ]
 
@@ -37,10 +43,10 @@ class TestCreateProvider:
 
 
 class TestDataProviderProtocol:
-    def test_protocol_has_21_methods(self):
+    def test_protocol_has_30_methods(self):
         methods = [m for m in dir(DataProvider) if not m.startswith("_")]
         assert sorted(methods) == sorted(PROTOCOL_METHODS)
-        assert len(methods) == 21
+        assert len(methods) == 30
 
     def test_fake_provider_conforms_to_protocol(self):
         # Structural conformance: the test double must implement every method

@@ -1,6 +1,6 @@
 # MCP — Tools Reference
 
-The MCP server exposes **35 tools** to AI clients. They are registered against a
+The MCP server exposes **42 tools** to AI clients. They are registered against a
 single shared `McpServer` instance in `mcp/server.py`; the registered name is the
 function's `__name__`, so **tool names are a stable contract** — internal
 refactoring must never rename a tool (see
@@ -31,6 +31,22 @@ All tools return JSON **strings** (`json.dumps(..., indent=2, default=str)`).
 | `get_market_holidays` | `date?` | Market holidays. |
 | `get_market_timings` | `date` | Market timings for a date. |
 | `get_instruments` | `query`, `exchange="NSE"` | Instrument search. |
+
+## Fundamentals & news (`mcp/fundamentals.py` — 7 tools)
+
+These query Upstox's fundamentals API (by ISIN for stocks) and the news API.
+Fundamentals tools skip cleanly for indices (the MCP tool raises with a clear
+message; the batch runner records `"skipped: fundamentals only available for equity stocks"`).
+
+| Tool | Args | Returns |
+|---|---|---|
+| `get_company_profile` | `symbol` | Business description, sector, sector market cap. |
+| `get_share_holdings` | `symbol` | Quarterly shareholding pattern by category (promoters, FII, DII, mutual funds, retail). |
+| `get_key_ratios` | `symbol` | P/E, P/B, ROA, ROE, ROCE, EV/EBITDA with sector benchmarks. |
+| `get_corporate_actions` | `symbol` | Dividends, bonuses, splits, rights issues with ex-dates and amounts. |
+| `get_competitors` | `symbol` | Peer companies with instrument keys and sector market cap. |
+| `get_news` | `symbol` | News articles for the symbol (past 7 days, up to 100 items). |
+| `get_option_greeks` | `symbol`, `expiry_date?` | Live IV, delta, gamma, theta, vega for all strikes in the option chain. |
 
 ## Derived analytics (`mcp/options.py` — 10 tools)
 

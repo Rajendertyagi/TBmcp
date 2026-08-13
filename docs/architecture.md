@@ -20,7 +20,7 @@ TBMCP/                       # git repo root = the app
 │
 ├── providers/               # DataProvider abstraction (swap brokers here)
 │   ├── __init__.py          #   create_provider() factory + re-exports
-│   ├── base.py              #   21-method DataProvider protocol
+│   ├── base.py              #   30-method DataProvider protocol
 │   └── upstox.py            #   UpstoxClient: the Upstox v2/v3 REST adapter
 │
 ├── analytics/               # derived F&O analytics — pure functions over models
@@ -30,6 +30,7 @@ TBMCP/                       # git repo root = the app
 ├── mcp/                     # AI-facing MCP server
 │   ├── server.py            #   assembly: shared McpServer + tool registration
 │   ├── market_data.py       #   19 raw data tools (get_*)
+│   ├── fundamentals.py      #   7 fundamentals/news/Greeks tools
 │   └── options.py           #   16 derived/strategy tools (compute_*, price_*)
 │
 ├── api/                     # human-facing Falcon web dashboard
@@ -99,7 +100,7 @@ the data client into each tool module (`market_data._client = client`), and
 registers every tool from each module's `TOOLS` list:
 
 ```python
-for _fn in market_data.TOOLS + options.TOOLS:
+for _fn in fundamentals.TOOLS + market_data.TOOLS + options.TOOLS:
     mcp.tool()(_fn)
 ```
 

@@ -51,6 +51,27 @@ async def get_news(symbol: str) -> str:
     return json.dumps(data, indent=2, default=str)
 
 
+async def get_option_greeks(symbol: str, expiry_date: Optional[str] = None) -> str:
+    """Live option Greeks (IV, delta, gamma, theta, vega) for a symbol's chain.
+
+    Fetches the option chain, extracts all instrument keys, then batch-fetches
+    greeks via the V3 endpoint (up to 50 keys per call). Returns the raw greeks
+    dict keyed by instrument key.
+    """
+    chain = await asyncio.to_thread(_client.get_option_chain, symbol, expiry_date)
+    rows = chain.get("rows", [])
+    keys: list[str] = []
+    for row in rows:
+        for side in ("CE", "PE"):
+            leg = row.get(side)
+            if leg and leg.get("instrumentKey"):
+                keys.append(leg["instrumentKey"])
+    if not keys:
+        return json.dumps({"error": f"no option keys found for {symbol}"}, indent=2)
+    data = await asyncio.to_thread(_client.get_option_greeks, keys)
+    return json.dumps(data, indent=2, default=str)
+
+
 def _isin_of(symbol: str) -> str:
     """Extract ISIN from a resolved instrument key (``NSE_EQ|<ISIN>``)."""
     key = _client.resolve_key(symbol.strip().upper())
@@ -69,4 +90,5 @@ TOOLS = [
     get_corporate_actions,
     get_competitors,
     get_news,
+    get_option_greeks,
 ]

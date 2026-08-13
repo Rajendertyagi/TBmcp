@@ -93,4 +93,10 @@ export var api = {
   async news(symbol) {
     return request("/api/news?symbol=" + enc(symbol));
   },
+
+  async greeks(symbol, expiry) {
+    var q = "?symbol=" + enc(symbol);
+    if (expiry) q += "&expiry=" + enc(expiry);
+    return request("/api/greeks" + q);
+  },
 };

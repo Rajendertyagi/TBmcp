@@ -126,6 +126,22 @@ def run_all_tools(client, symbol: str) -> dict:
         }
     time.sleep(TEST_ALL_GAP_SECONDS)
 
+    # --- Option Greeks (requires a valid chain) ----------------------------
+    if chain:
+        try:
+            results["option_greeks"] = {
+                "ok": True,
+                "data": client.get_option_greeks_for_symbol(sym, expiry),
+            }
+        except Exception as exc:
+            results["option_greeks"] = {"ok": False, "error": str(exc)}
+    else:
+        results["option_greeks"] = {
+            "ok": False,
+            "error": "skipped: no option chain for " + sym,
+        }
+    time.sleep(TEST_ALL_GAP_SECONDS)
+
     # Expiry-dependent raw tools: skip cleanly if we couldn't resolve one.
     if expiry:
         run("pcr", client.get_pcr, sym, expiry, today)

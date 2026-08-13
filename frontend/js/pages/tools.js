@@ -15,6 +15,8 @@ var TOOL_ORDER = [
   // Fundamentals (stock profile / ownership / financials)
   "company_profile", "share_holdings", "key_ratios", "corporate_actions",
   "competitors", "news",
+  // Option Greeks (live IV, delta, gamma, theta, vega per strike)
+  "option_greeks",
   // Analytics (compute_*)
   "compute_pcr", "compute_max_pain", "compute_top_oi_strikes", "compute_atm",
   "compute_iv_skew", "compute_oi_buildup", "compute_support_resistance",

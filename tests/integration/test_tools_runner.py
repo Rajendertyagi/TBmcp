@@ -10,8 +10,9 @@ from services.tools_runner import run_all_tools
 from tests.integration.conftest import FakeProvider
 
 # Happy-path result count: 1 futures_chain + 11 raw tools + option_chain +
-# 4 expiry-dependent raw tools + 10 compute_* + 6 price_* + margin = 34.
-HAPPY_PATH_RESULT_COUNT = 34
+# 4 expiry-dependent raw tools + 10 compute_* + 6 price_* + margin +
+# 6 fundamentals + option_greeks = 41.
+HAPPY_PATH_RESULT_COUNT = 41
 
 
 class TestRunAllToolsHappyPath:

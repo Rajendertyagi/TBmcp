@@ -163,6 +163,9 @@ FUNDAMENTAL_COMPETITORS: Final[str] = "/competitors"
 # --- News (GET /v2/news?category=instrument_keys&instrument_keys=...) ----------
 NEWS_PATH: Final[str] = "/news"
 
+# --- Option Greeks (GET /v3/market-quote/option-greek?instrument_key=...) -------
+OPTION_GREEKS_PATH: Final[str] = "/market-quote/option-greek"
+
 # --- Active data provider (single switch point for future brokers) ------------
 PROVIDER_ENV: Final[str] = "TBMCP_PROVIDER"
 DEFAULT_PROVIDER: Final[str] = "upstox"

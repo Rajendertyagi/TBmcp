@@ -15,7 +15,7 @@ data layer, so the AI view and the human view never disagree.
 
 | Deliverable | For whom | What it is | How it runs |
 |---|---|---|---|
-| **MCP server (AI)** | The AI client | A server built on the forked ZeroMCP engine exposing **35 tools** (raw market data + derived F&O analytics / strategy pricers) | `python main.py mcp` (stdio transport) |
+| **MCP server (AI)** | The AI client | A server built on the forked ZeroMCP engine exposing **42 tools** (raw market data + fundamentals/news/Greeks + derived F&O analytics / strategy pricers) | `python main.py mcp` (stdio transport) |
 | **Web dashboard (human)** | A human | A single-page app with a live ticker, option-chain table, charts, and one-click Upstox login | `python main.py ui` (Falcon web server, static HTML/JS) |
 
 Both can run together with `python main.py` (default) or `python main.py both`.
@@ -24,6 +24,11 @@ Both can run together with `python main.py` (default) or `python main.py both`.
 
 - **Market data:** live quotes (LTP/OHLC), option chains, futures chains, expiry
   dates, historical candles, market depth, and exchange status/holidays/timings.
+- **Fundamentals (stocks):** company profile, shareholding pattern, key ratios
+  (P/E, ROE, ROCE, etc.), corporate actions (dividends, splits, bonuses),
+  competitors, and news articles.
+- **Option Greeks:** live IV, delta, gamma, theta, vega per strike via the V3
+  market-quote endpoint.
 - **Derived F&O analytics:** put-call ratio, max pain, top-OI strikes, ATM
   strike, IV skew, OI buildup classification, support/resistance, straddle
   pricing, gamma exposure, futures basis.

@@ -54,6 +54,7 @@ from constants import (
     NEWS_PATH,
     OPTION_CHAIN_PATH,
     OPTION_CONTRACT_PATH,
+    OPTION_GREEKS_PATH,
     RATE_LIMIT_BACKOFF_SECONDS,
     REQUEST_TIMEOUT_SECONDS,
     TOKEN_ENDPOINT,
@@ -971,6 +972,51 @@ class UpstoxClient:
             {"category": "instrument_keys", "instrument_keys": keys_param},
         )
         return raw.get("data") if isinstance(raw, dict) else {}
+
+    def get_option_greeks(self, instrument_keys: list[str]) -> dict:
+        """Option Greeks (IV, delta, gamma, theta, vega) for up to 50 keys.
+
+        Uses the V3 market-quote endpoint. Returns a dict keyed by instrument key
+        (with ':' separator in response, e.g. ``NSE_FO:NIFTY2540923000CE``).
+        """
+        self.ensure_initialized()
+        keys_param = ",".join(str(k) for k in instrument_keys[:50])
+        raw = self._request(
+            OPTION_GREEKS_PATH,
+            {"instrument_key": keys_param},
+            base_url=UPSTOX_V3_BASE_URL,
+        )
+        return raw.get("data") if isinstance(raw, dict) else {}
+
+    def get_option_greeks_for_symbol(self, symbol: str, expiry_date: Optional[str] = None) -> dict:
+        """Fetch option Greeks for all strikes in a symbol's chain.
+
+        Chains: resolve symbol -> fetch option contracts (for instrument keys)
+        -> optionally filter by expiry -> batch-fetch greeks -> return result.
+        """
+        key = self.resolve_key(symbol)
+        # Fetch all option contracts for the underlying
+        raw = self._request(OPTION_CONTRACT_PATH, {"instrument_key": key})
+        contracts = raw.get("data", []) if isinstance(raw, dict) else []
+        if not contracts:
+            return {"error": f"no option contracts found for {symbol}"}
+        # Extract instrument keys, optionally filtering by expiry
+        instrument_keys: list[str] = []
+        for c in contracts:
+            k = c.get("instrument_key")
+            if not k:
+                continue
+            if expiry_date:
+                # Match by expiry string (YYYY-MM-DD)
+                contract_expiry = c.get("expiry", "")
+                if contract_expiry != expiry_date:
+                    continue
+            instrument_keys.append(k)
+            if len(instrument_keys) >= 50:
+                break
+        if not instrument_keys:
+            return {"error": f"no option keys found for {symbol}" + (f" expiry={expiry_date}" if expiry_date else "")}
+        return self.get_option_greeks(instrument_keys)
 
     # --- Market quotes ---------------------------------------------------------
     def get_full_quote(self, symbol: str) -> dict[str, float]:

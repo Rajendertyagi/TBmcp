@@ -26,8 +26,8 @@ lives in exactly one document; other documents link to it rather than repeat it.
 ## Quick orientation
 
 - **AI side:** `python main.py mcp` starts an MCP server (stdio transport) built
-  on the forked ZeroMCP engine, exposing 35 tools (raw market data + derived F&O
-  analytics). See [mcp/tools.md](mcp/tools.md).
+  on the forked ZeroMCP engine, exposing 42 tools (raw market data +
+  fundamentals/news/Greeks + derived F&O analytics). See [mcp/tools.md](mcp/tools.md).
 - **Human side:** `python main.py ui` starts a Falcon web server serving a
   static HTML/JS single-page app on `http://127.0.0.1:8888`.
 - `python main.py` (or `both`) runs both simultaneously.

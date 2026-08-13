@@ -130,6 +130,53 @@ class TestLogin:
         assert "client_id=k" in resp.json["url"]
 
 
+class TestFundamentalsNewsGreeks:
+    def test_fundamentals_company_profile(self, api_client):
+        resp = api_client.simulate_get(
+            "/api/fundamentals", params={"symbol": "RELIANCE", "endpoint": "company_profile"}
+        )
+        assert resp.status_code == 200
+        body = resp.json
+        assert body["name"] == "Fake Corp"
+        assert body["isin"] == "INE000000000"
+
+    def test_fundamentals_missing_params_is_400(self, api_client):
+        assert api_client.simulate_get("/api/fundamentals").status_code == 400
+        assert api_client.simulate_get(
+            "/api/fundamentals", params={"symbol": "RELIANCE"}
+        ).status_code == 400
+
+    def test_fundamentals_unknown_endpoint_is_error_json(self, api_client):
+        resp = api_client.simulate_get(
+            "/api/fundamentals", params={"symbol": "RELIANCE", "endpoint": "bogus"}
+        )
+        assert resp.status_code == 200
+        assert "unknown fundamentals endpoint" in resp.json["error"]
+
+    def test_news_returns_articles(self, api_client):
+        resp = api_client.simulate_get("/api/news", params={"symbol": "RELIANCE"})
+        assert resp.status_code == 200
+        assert resp.json["articles"][0]["headline"] == "test news"
+
+    def test_news_missing_symbol_is_400(self, api_client):
+        assert api_client.simulate_get("/api/news").status_code == 400
+
+    def test_greeks_returns_chain_greeks(self, api_client):
+        resp = api_client.simulate_get("/api/greeks", params={"symbol": "NIFTY"})
+        assert resp.status_code == 200
+        assert "NSE_FO:NIFTY2540923000CE" in resp.json
+
+    def test_greeks_with_expiry(self, api_client):
+        resp = api_client.simulate_get(
+            "/api/greeks", params={"symbol": "NIFTY", "expiry": "2025-01-30"}
+        )
+        assert resp.status_code == 200
+        assert resp.json["NSE_FO:NIFTY2540923000CE"]["iv"] == 20.0
+
+    def test_greeks_missing_symbol_is_400(self, api_client):
+        assert api_client.simulate_get("/api/greeks").status_code == 400
+
+
 class TestErrorBoundary:
     """When the provider raises, the API must return JSON errors, not 500s."""
 
@@ -157,3 +204,20 @@ class TestErrorBoundary:
         resp = failing_api_client.simulate_get("/api/history", params={"symbol": "NIFTY"})
         assert resp.status_code == 200
         assert resp.json["candles"] == []
+
+    def test_fundamentals_surfaces_error_json(self, failing_api_client):
+        resp = failing_api_client.simulate_get(
+            "/api/fundamentals", params={"symbol": "RELIANCE", "endpoint": "company_profile"}
+        )
+        assert resp.status_code == 200
+        assert "upstream failure" in resp.json["error"]
+
+    def test_news_surfaces_error_json(self, failing_api_client):
+        resp = failing_api_client.simulate_get("/api/news", params={"symbol": "RELIANCE"})
+        assert resp.status_code == 200
+        assert "upstream failure" in resp.json["error"]
+
+    def test_greeks_surfaces_error_json(self, failing_api_client):
+        resp = failing_api_client.simulate_get("/api/greeks", params={"symbol": "NIFTY"})
+        assert resp.status_code == 200
+        assert "upstream failure" in resp.json["error"]

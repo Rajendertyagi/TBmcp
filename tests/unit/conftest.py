@@ -8,6 +8,7 @@ def _leg(strike: float, otype: str, **over: object) -> dict:
     """One OptionLeg-shaped dict with sane defaults, overridable per test."""
     leg: dict = {
         "strikePrice": float(strike),
+        "instrumentKey": "NSE_FO:NIFTY25JAN30000" + ("CE" if otype == "CE" else "PE"),
         "expiryDate": "2025-01-30",
         "optionType": otype,
         "lastPrice": 100.0,

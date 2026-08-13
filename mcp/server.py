@@ -35,18 +35,19 @@ options._client = client
 mcp = McpServer(
     "tbmcp",
     instructions=(
-        "TBMCP provides Indian equity/options/futures market data, fundamentals, and F&O "
+        "TBMCP provides Indian equity/options/futures market data, fundamentals, Greeks, and F&O "
         "analytics via the Upstox broker API. Raw data tools: get_option_chain, get_expiry_dates, "
         "get_spot_price, get_full_quote(s), get_historical_data, get_futures_chain, "
         "get_market_depth, get_margin, get_pcr, get_max_pain, get_oi, get_change_oi, get_fii, "
         "get_dii, get_market_status, get_market_holidays, get_market_timings, get_instruments. "
         "Fundamentals (by stock ISIN): get_company_profile, get_share_holdings, get_key_ratios, "
-        "get_corporate_actions, get_competitors, get_news. Derived analytics (no extra API call "
-        "- computed from a chain you already fetched): compute_pcr, compute_max_pain, "
-        "compute_top_oi_strikes, compute_atm, compute_iv_skew, compute_oi_buildup, "
-        "compute_support_resistance, compute_straddle, compute_gex, compute_futures_basis. "
-        "Strategy pricers: price_long_straddle, price_long_strangle, price_bull_call_spread, "
-        "price_bear_put_spread, price_iron_condor, price_long_butterfly."
+        "get_corporate_actions, get_competitors, get_news. Option Greeks: get_option_greeks "
+        "(fetches chain keys then batch-fetches live IV/delta/gamma/theta/vega). Derived analytics "
+        "(no extra API call - computed from a chain you already fetched): compute_pcr, "
+        "compute_max_pain, compute_top_oi_strikes, compute_atm, compute_iv_skew, "
+        "compute_oi_buildup, compute_support_resistance, compute_straddle, compute_gex, "
+        "compute_futures_basis. Strategy pricers: price_long_straddle, price_long_strangle, "
+        "price_bull_call_spread, price_bear_put_spread, price_iron_condor, price_long_butterfly."
     ),
 )
 

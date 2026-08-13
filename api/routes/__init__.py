@@ -238,6 +238,19 @@ class LoginStatusResource:
         _json(resp, {"connected": connected})
 
 
+class OptionGreeksResource:
+    """Live option Greeks for a symbol's option chain (IV, delta, gamma, theta, vega)."""
+
+    def on_get(self, req, resp):
+        sym = (req.get_param("symbol") or "").strip().upper()
+        expiry = (req.get_param("expiry") or "").strip() or None
+        if not sym:
+            _json(resp, {"error": "missing symbol"}, falcon.HTTP_400)
+            return
+        client = get_client()
+        _json(resp, _safe(client.get_option_greeks_for_symbol, sym, expiry))
+
+
 class FundamentalsResource:
     """Fetch a single fundamentals endpoint for a symbol."""
 
@@ -296,4 +309,5 @@ __all__ = [
     'LoginStatusResource',
     'FundamentalsResource',
     'NewsResource',
+    'OptionGreeksResource',
 ]

@@ -18,6 +18,7 @@ import json
 
 import pytest
 
+import mcp.fundamentals as fundamentals
 import mcp.market_data as market_data
 import mcp.options as options
 
@@ -123,16 +124,53 @@ class StubClient:
         self.calls.append(("get_instruments", query, exchange))
         return [{"trading_symbol": query, "exchange": exchange}]
 
+    # fundamentals / news / greeks
+    def resolve_key(self, symbol):
+        self.calls.append(("resolve_key", symbol))
+        return "NSE_EQ|INE000000000"
+
+    def get_company_profile(self, isin):
+        self.calls.append(("get_company_profile", isin))
+        return {"isin": isin, "name": "Fake Corp", "sector": "Technology"}
+
+    def get_share_holdings(self, isin):
+        self.calls.append(("get_share_holdings", isin))
+        return [{"category": "Promoters", "shares": 1000000}]
+
+    def get_key_ratios(self, isin):
+        self.calls.append(("get_key_ratios", isin))
+        return [{"ratio": "pe", "value": 20.0}]
+
+    def get_corporate_actions(self, isin):
+        self.calls.append(("get_corporate_actions", isin))
+        return [{"type": "DIVIDEND", "exDate": "2025-02-14", "amount": 5.0}]
+
+    def get_competitors(self, isin, exchange="NSE"):
+        self.calls.append(("get_competitors", isin, exchange))
+        return [{"name": "Peer Corp", "instrument_key": f"{exchange}_EQ|INE000000001"}]
+
+    def get_news(self, instrument_keys):
+        self.calls.append(("get_news", instrument_keys))
+        return {"articles": [{"headline": "test news", "instrument_key": instrument_keys[0]}]}
+
+    def get_option_greeks(self, instrument_keys):
+        self.calls.append(("get_option_greeks", instrument_keys))
+        return {
+            k: {"iv": 20.0, "delta": 0.5, "gamma": 0.01, "theta": -0.1, "vega": 0.2}
+            for k in instrument_keys
+        }
+
 
 @pytest.fixture
 def stub(monkeypatch) -> StubClient:
     client = StubClient(make_option_chain(), _futures_chain())
     monkeypatch.setattr(market_data, "_client", client)
     monkeypatch.setattr(options, "_client", client)
+    monkeypatch.setattr(fundamentals, "_client", client)
     return client
 
 
-# --- invocation table for all 35 tools --------------------------------------
+# --- invocation table for all 42 tools --------------------------------------
 _TOOL_CALLS: dict[str, tuple[tuple, dict]] = {
     # market_data (19)
     "get_option_chain": (("NIFTY",), {}),
@@ -174,6 +212,14 @@ _TOOL_CALLS: dict[str, tuple[tuple, dict]] = {
                                        "call_buy_strike": 20100.0, "call_sell_strike": 20200.0}),
     "price_long_butterfly": (("NIFTY",), {"lower_strike": 19900.0, "middle_strike": 20000.0,
                                           "upper_strike": 20100.0}),
+    # fundamentals / news / greeks (7)
+    "get_company_profile": (("RELIANCE",), {}),
+    "get_share_holdings": (("RELIANCE",), {}),
+    "get_key_ratios": (("RELIANCE",), {}),
+    "get_corporate_actions": (("RELIANCE",), {}),
+    "get_competitors": (("RELIANCE",), {}),
+    "get_news": (("RELIANCE",), {}),
+    "get_option_greeks": (("NIFTY",), {}),
 }
 
 # The one key every options tool is guaranteed to return.
@@ -202,13 +248,15 @@ def _invoke(tool) -> str:
     return asyncio.run(tool(*args, **kwargs))
 
 
-ALL_TOOLS = market_data.TOOLS + options.TOOLS
+ALL_TOOLS = market_data.TOOLS + options.TOOLS + fundamentals.TOOLS
 
 
 class TestToolLists:
-    def test_tool_split_is_19_and_16(self):
+    def test_tool_split_is_19_and_16_and_7(self):
         assert len(market_data.TOOLS) == 19
         assert len(options.TOOLS) == 16
+        assert len(fundamentals.TOOLS) == 7
+        assert len(ALL_TOOLS) == 42
 
     def test_every_tool_has_an_invocation_entry(self):
         missing = [f.__name__ for f in ALL_TOOLS if f.__name__ not in _TOOL_CALLS]
@@ -230,6 +278,22 @@ class TestOptionsToolContract:
     def test_fetches_the_chain_via_the_client(self, stub, tool):
         _invoke(tool)
         assert stub.calls.count(("get_option_chain", "NIFTY", None)) >= 1
+
+
+@pytest.mark.parametrize("tool", sorted(fundamentals.TOOLS, key=lambda f: f.__name__))
+class TestFundamentalsToolContract:
+    def test_returns_parseable_json(self, stub, tool):
+        parsed = json.loads(_invoke(tool))
+        assert isinstance(parsed, (dict, list))
+
+    def test_equity_tools_resolve_symbol_via_the_client(self, stub, tool):
+        _invoke(tool)
+        if tool is fundamentals.get_option_greeks:
+            # greeks reads instrument keys off the chain; no ISIN resolution
+            assert ("get_option_chain", "NIFTY", None) in stub.calls
+            assert any(c[0] == "get_option_greeks" for c in stub.calls)
+        else:
+            assert stub.calls.count(("resolve_key", "RELIANCE")) >= 1
 
 
 # --- market_data output shapes ----------------------------------------------
