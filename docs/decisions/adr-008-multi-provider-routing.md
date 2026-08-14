@@ -22,10 +22,13 @@ Two design questions had to be settled:
 ## Decision
 
 - **`providers/fyers.py`** — a self-contained `FyersClient` satisfying the
-  `DataProvider` protocol. It is **data-only**: the 11 data methods are
-  implemented; the 19 methods it cannot serve (margin, fundamentals, market-info
-  PCR/max-pain/OI/FII-DII, status/holidays/timings, instruments, news, user-auth)
-  raise `UnsupportedByProvider` so the router can fall back.
+  `DataProvider` protocol. It implements the data methods (option chain with
+  built-in Greeks, quotes, depth, history) **and** derives the F&O analytics
+  (PCR, max-pain, OI, change-OI) from its own option chain via the shared
+  `analytics` layer, plus exchange market status from FYERS's `marketStatus`
+  endpoint (see the addendum below). Methods it still cannot serve (futures
+  chain, margin, FII/DII, holidays, timings, instruments, fundamentals, news,
+  user-auth) raise `UnsupportedByProvider` so the router can fall back.
 - **`providers/affinity.py`** — `AffinityRouter` fronts ≥2 active providers. It
   pins each symbol to the first healthy provider that serves the method
   (primary = Upstox first), fails over on error, and marks a failing provider
@@ -70,3 +73,21 @@ Two design questions had to be settled:
 - FYERS is opt-in; the default experience is unchanged Upstox.
 - Phase 2 can add cross-consumer affinity sharing without altering the router's
   external contract.
+
+## Addendum (2026-08-14) — FYERS scope extended to F&O analytics
+
+Initial scope limited FYERS to the raw data methods; PCR/max-pain/OI/change-OI
+and market status fell back to Upstox. In practice FYERS's option chain carries
+everything needed to compute those analytics, and the shared analytics layer is
+broker-agnostic by design, so `FyersClient` now serves them itself:
+
+- `get_pcr` / `get_max_pain` — delegated to `analytics.compute_pcr` /
+  `analytics.compute_max_pain` over the FYERS chain.
+- `get_oi` / `get_change_oi` — computed from FYERS chain rows.
+- `get_market_status` — parsed from FYERS's `/marketStatus` endpoint.
+
+Benefits: fewer fallbacks to Upstox, and FYERS data stays internally consistent
+per symbol (analytics derive from the same chain the router pinned). Risk: the
+response-shape assumptions (spot entry in the chain, `ltpch/ltpchp/bid/ask`,
+`d[].v` quotes, `marketStatus` list) are encoded in unit tests and are validated
+against the real API before release.

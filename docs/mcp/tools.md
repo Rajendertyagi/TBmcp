@@ -21,8 +21,8 @@ All tools return JSON **strings** (`json.dumps(..., indent=2, default=str)`).
 | `get_futures_chain` | `symbol`, `expiry_date?` | Futures chain for a symbol. |
 | `get_market_depth` | `symbol` | Market depth. |
 | `get_margin` | `instruments: list[dict]` | Margin requirement for a list of instruments. |
-| `get_pcr` | `symbol`, `expiry`, `date`, `bucket_interval=60` | Put-call ratio (Upstox market endpoint). |
-| `get_max_pain` | `symbol`, `expiry`, `date`, `bucket_interval=60` | Max-pain strike (Upstox market endpoint). |
+| `get_pcr` | `symbol`, `expiry`, `date`, `bucket_interval=60` | Put-call ratio. |
+| `get_max_pain` | `symbol`, `expiry`, `date`, `bucket_interval=60` | Max-pain strike. |
 | `get_oi` | `symbol`, `expiry`, `date` | Open interest. |
 | `get_change_oi` | `symbol`, `expiry`, `date`, `interval=1` | Change in open interest. |
 | `get_fii` | `data_type="NSE_FO\|INDEX_FUTURES"`, `interval="1D"` | FII data. |

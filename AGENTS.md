@@ -256,9 +256,11 @@ All 42 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
   `upstox_market_data`, `upstox_fundamentals`) plus shared `upstox_parsing`
   helpers — the public surface (`UpstoxClient`, all protocol methods) is unchanged.
 - `providers/fyers.py` is the **`FyersClient`** adapter — a **data-only secondary**
-  provider (option chain, quotes, depth, history, Greeks). Methods it cannot serve
-  raise `UnsupportedByProvider`. It is `requests`-only (the `fyers-apiv3` SDK does
-  not install on Python 3.13) and reads its `FYERS_*` creds from the portable
+  provider (option chain with built-in Greeks, quotes, depth, history) that also
+  derives the F&O analytics (PCR, max-pain, OI, change-OI) from its own chain via
+  the shared `analytics` layer and serves exchange market status. Methods it cannot
+  serve raise `UnsupportedByProvider`. It is `requests`-only (the `fyers-apiv3` SDK
+  does not install on Python 3.13) and reads its `FYERS_*` creds from the portable
   `.env`; `config.py` is intentionally untouched.
 - `providers/affinity.py` is the **`AffinityRouter`** — when ≥2 providers are
   active it pins each symbol to one broker (per-symbol sticky affinity), fails

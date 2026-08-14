@@ -42,15 +42,17 @@ changing the 42 MCP tools, the dashboard, or the analytics.
 - **`resolve_key`** is per-provider; the router's public `resolve_key` returns the
   Upstox format (the dashboard batch expects it) with a FYERS fallback so
   "Test All" never crashes if one broker is down.
-- **FYERS scope:** option chain v3 + built-in Greeks, quotes, depth, history,
-  greeks, `resolve_key`. NOT futures/margin/PCR/max-pain/OI/FII-DII/status/
-  holidays/timings/instruments/fundamentals/news/auth — those raise
+- **FYERS scope (extended 2026-08-14, see ADR-008 addendum):** option chain v3 +
+  built-in Greeks, quotes, depth, history, greeks, `resolve_key`, **plus** the
+  F&O analytics (PCR, max-pain, OI, change-OI) computed from the FYERS chain via
+  the shared `analytics` layer, and exchange market status. NOT futures/margin/
+  FII-DII/holidays/timings/instruments/fundamentals/news/auth — those raise
   `UnsupportedByProvider` and fall back to another provider.
 
 ## Verification
 
-- `pytest` — 267 offline tests pass (252 existing + 15 new:
-  `tests/unit/test_fyers.py`, `tests/integration/test_affinity_router.py`).
+- `pytest` — 285 offline tests pass (unit + integration; the FYERS suite lives in
+  `tests/unit/test_fyers.py` + `tests/integration/test_affinity_router.py`).
 - `python -m compileall providers tests` — clean.
 - `python main.py --help` — works.
 - 42 MCP tool names unchanged (`len(s.mcp.tools.methods) == 42`).

@@ -8,8 +8,10 @@ in front of two kinds of users:
    the market by calling MCP tools.
 2. **A human** — through a web dashboard opened in a browser.
 
-Both sides read the same live data from the **Upstox** broker through one shared
-data layer, so the AI view and the human view never disagree.
+Both sides read the same live data through a shared provider layer. The primary
+broker is **Upstox**; a secondary **FYERS** data source is available as a
+fallback (or single-provider mode) when enabled. Routing is per-symbol with
+sticky affinity so the AI view and the human view never disagree.
 
 ## The two deliverables
 
@@ -46,7 +48,7 @@ Both can run together with `python main.py` (default) or `python main.py both`.
 | Human dashboard backend | **Falcon** — zero-dependency WSGI framework | Cleanest Nuitka freeze; see [decisions/adr-002-falcon-dashboard.md](decisions/adr-002-falcon-dashboard.md) |
 | Human dashboard frontend | **Vanilla JS** ES modules + HTML/CSS | No framework; see [frontend/guide.md](frontend/guide.md) |
 | Charts | TradingView **lightweight-charts** v4 (bundled locally) | Browser-side; fed with Upstox candles |
-| Data source | **Upstox v2/v3 REST API** via `providers/upstox.py` | Behind the `DataProvider` abstraction; see [decisions/adr-003-data-provider-abstraction.md](decisions/adr-003-data-provider-abstraction.md) |
+| Data sources | **Upstox v2/v3** (`providers/upstox.py`) primary, **FYERS v3** (`providers/fyers.py`) secondary opt-in | Behind the `DataProvider` abstraction; see [decisions/adr-003-data-provider-abstraction.md](decisions/adr-003-data-provider-abstraction.md) + [decisions/adr-008-multi-provider-routing.md](decisions/adr-008-multi-provider-routing.md) |
 | HTTP server (prod) | **Waitress** | Serves the Falcon app |
 | Packaging | **Nuitka** onefile `.exe` (release only) | Single portable binary; see [packaging/nuitka.md](packaging/nuitka.md) |
 

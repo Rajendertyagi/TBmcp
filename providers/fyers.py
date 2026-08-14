@@ -2,10 +2,11 @@
 
 A separate, self-contained adapter behind the same ``DataProvider`` protocol
 Upstox satisfies. It is **data-only**: option chain, quotes, depth, history and
-option Greeks. Anything FYERS does not serve (margin, fundamentals, market-info
-PCR/max-pain/OI/FII-DII, status/holidays/timings, instruments, news, auth user
-endpoints) raises :class:`UnsupportedByProvider` so the affinity router can fall
-back to another provider for that call.
+option Greeks, and F&O analytics (PCR, max-pain, OI, change-OI) plus market
+status computed/served from the option chain and the marketStatus endpoint.
+Anything FYERS does not serve (margin, fundamentals, FII-DII, holidays/timings,
+instruments, news, auth user endpoints) raises :class:`UnsupportedByProvider`
+so the affinity router can fall back to another provider for that call.
 
 Transport is plain ``requests`` (the official ``fyers-apiv3`` SDK was dropped:
 its pinned ``aiohttp==3.9.3`` fails to build on Python 3.13 without the MSVC
@@ -25,7 +26,7 @@ from urllib.parse import urlencode
 
 import requests
 
-from analytics import classify_buildup
+from analytics import classify_buildup, compute_pcr, compute_max_pain
 from models import (
     Candle,
     DepthLevel,
@@ -411,6 +412,9 @@ class FyersClient:
         data = raw.get("data", raw) if isinstance(raw, dict) else {}
         rows, underlying, totals = self._parse_chain_rows(data, expiry_date)
         all_expiries = self._extract_expiries(data) or [expiry_date]
+        # Prefer FYERS's own totals; fall back to the per-leg sums from parsing.
+        ce_oi = int(data.get("callOi") or totals["ce_oi"] or 0)
+        pe_oi = int(data.get("putOi") or totals["pe_oi"] or 0)
         return {
             "symbol": symbol,
             "underlyingValue": underlying,
@@ -419,8 +423,8 @@ class FyersClient:
             "strikePrices": [r["strikePrice"] for r in rows],
             "rows": rows,
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "totalCEOpenInterest": totals["ce_oi"],
-            "totalPEOpenInterest": totals["pe_oi"],
+            "totalCEOpenInterest": ce_oi,
+            "totalPEOpenInterest": pe_oi,
             "totalCEVolume": totals["ce_vol"],
             "totalPEVolume": totals["pe_vol"],
         }
@@ -428,10 +432,19 @@ class FyersClient:
     def _parse_chain_rows(self, data: dict, expiry_date: str):
         rows: list[OptionChainRow] = []
         totals = {"ce_oi": 0, "pe_oi": 0, "ce_vol": 0, "pe_vol": 0}
-        underlying = float(data.get("underlyingValue") or data.get("spot_price") or 0)
         chain = data.get("optionsChain") if isinstance(data, dict) else None
         if not isinstance(chain, list):
-            return rows, underlying, totals
+            return rows, 0.0, totals
+        # The underlying spot is a chain entry with option_type == "" (strike_price == -1);
+        # its `ltp` is the underlying value FYERS reports for the chain.
+        underlying = 0.0
+        for item in chain:
+            if not isinstance(item, dict):
+                continue
+            otype = str(item.get("option_type") or item.get("optionType") or "").upper()
+            if otype == "" or item.get("strike_price") == -1:
+                underlying = float(item.get("ltp") or 0)
+                break
         by_strike: dict[float, OptionChainRow] = {}
         for item in chain:
             if not isinstance(item, dict):
@@ -455,8 +468,6 @@ class FyersClient:
                 totals["pe_oi"] += leg["openInterest"]
                 totals["pe_vol"] += leg["totalTradedVolume"]
         rows = [by_strike[s] for s in sorted(by_strike)]
-        if underlying == 0 and rows:
-            underlying = float(rows[len(rows) // 2].get("CE", {}).get("underlyingValue", 0) or 0)
         return rows, underlying, totals
 
     def _map_leg(self, item: dict, strike: float, expiry: str, underlying: float) -> Optional[OptionLeg]:
@@ -465,7 +476,7 @@ class FyersClient:
         prev_oi = int(float(item.get("prev_oi") or item.get("prevOi") or 0))
         oi_change = oi - prev_oi
         volume = int(float(item.get("volume") or 0))
-        change = float(item.get("ch") or 0)
+        change = float(item.get("ltpch") or 0)
         g = item.get("greeks") if isinstance(item.get("greeks"), dict) else {}
         iv = float(g.get("iv") or item.get("iv") or 0)
         return {
@@ -474,7 +485,7 @@ class FyersClient:
             "optionType": str(item.get("option_type") or "CE").upper(),
             "lastPrice": ltp,
             "change": change,
-            "pChange": float(item.get("chp") or 0),
+            "pChange": float(item.get("ltpchp") or 0),
             "openInterest": oi,
             "changeinOpenInterest": oi_change,
             "totalTradedVolume": volume,
@@ -483,10 +494,10 @@ class FyersClient:
             "gamma": _opt_float(g.get("gamma")),
             "theta": _opt_float(g.get("theta")),
             "vega": _opt_float(g.get("vega")),
-            "bidQty": int(float(item.get("bid_qty") or item.get("bidQty") or 0)),
-            "bidPrice": float(item.get("bid_price") or item.get("bidPrice") or 0),
-            "askQty": int(float(item.get("ask_qty") or item.get("askQty") or 0)),
-            "askPrice": float(item.get("ask_price") or item.get("askPrice") or 0),
+            "bidQty": 0,
+            "bidPrice": float(item.get("bid") or 0),
+            "askQty": 0,
+            "askPrice": float(item.get("ask") or 0),
             "underlyingValue": underlying,
             "oiChangePct": (oi_change / prev_oi * 100) if prev_oi > 0 else 0.0,
             "buildTag": classify_buildup(oi_change, change),
@@ -494,25 +505,35 @@ class FyersClient:
 
     # -- data: quotes ----------------------------------------------------------
     def _quote_entry(self, raw: Any, key: str) -> Optional[dict[str, float]]:
+        """Extract a normalised quote from a FYERS /quotes response.
+
+        FYERS returns ``{"s":"ok","d":[{"v":{lp,ch,chp,...}, "symbol":...}, ...]}``.
+        """
         if not isinstance(raw, dict):
             return None
-        data = raw.get("data", raw)
-        entry = None
-        if isinstance(data, dict):
-            entry = data.get(key) or (list(data.values())[0] if data else None)
-        elif isinstance(data, list) and data:
-            entry = data[0]
-        if not isinstance(entry, dict):
+        entries = raw.get("d") if isinstance(raw.get("d"), list) else None
+        if entries is None:
+            # Some callers pass a single pre-extracted entry; handle gracefully.
+            entries = [raw] if isinstance(raw.get("v"), dict) else []
+        match = None
+        for item in entries:
+            if not isinstance(item, dict):
+                continue
+            v = item.get("v") if isinstance(item.get("v"), dict) else item
+            sym = str(v.get("symbol") or item.get("symbol") or "")
+            if sym == key or (key and sym.endswith(key.split(":")[-1])) or match is None:
+                match = v
+                if sym == key or (key and sym.endswith(key.split(":")[-1])):
+                    break
+        if not isinstance(match, dict):
             return None
-        ltp = _opt_float(entry.get("ltp"))
-        if ltp is None:
-            ltp = _opt_float(entry.get("last_price"))
+        ltp = _opt_float(match.get("lp"))
         if ltp is None:
             return None
         return {
             "last_price": ltp,
-            "net_change": _opt_float(entry.get("ch")) or 0.0,
-            "p_change": _opt_float(entry.get("chp")) or 0.0,
+            "net_change": _opt_float(match.get("ch")) or 0.0,
+            "p_change": _opt_float(match.get("chp")) or 0.0,
         }
 
     def get_full_quote(self, symbol: str) -> dict[str, float]:
@@ -533,15 +554,19 @@ class FyersClient:
             key_for[sym] = k
             keys.append(k)
         raw = self._request("/quotes", {"symbols": ",".join(keys)})
-        data = raw.get("data", raw) if isinstance(raw, dict) else {}
+        entries = raw.get("d") if isinstance(raw.get("d"), list) else []
+        # Map FYERS symbol -> normalised quote.
+        by_key: dict[str, dict] = {}
+        for item in entries:
+            if not isinstance(item, dict):
+                continue
+            v = item.get("v") if isinstance(item.get("v"), dict) else item
+            sym = str(v.get("symbol") or item.get("symbol") or "")
+            by_key[sym] = self._quote_entry({"d": [item]}, sym) or {}
         out: dict[str, dict] = {}
         for sym in symbols:
             k = key_for[sym]
-            entry = None
-            if isinstance(data, dict):
-                entry = data.get(k)
-            norm = self._quote_entry({"data": entry} if entry else {}, k) if entry else None
-            out[sym] = norm if norm is not None else {"error": f"No quote for {sym}"}
+            out[sym] = by_key.get(k) or {"error": f"No quote for {sym}"}
         return out
 
     def get_spot_price(self, symbol: str) -> float:
@@ -556,7 +581,11 @@ class FyersClient:
         self.ensure_initialized()
         key = self.resolve_key(symbol)
         raw = self._request("/depth", {"symbol": key, "ohlcv_flag": "1"})
+        # FYERS returns {"d":[{"v":{"symbol":..., "ltp":..., "ask":[...], "bids":[...]}}]}.
         data = raw.get("data", raw) if isinstance(raw, dict) else {}
+        if isinstance(data, dict) and "v" not in data and isinstance(raw.get("d"), list) and raw["d"]:
+            first = raw["d"][0]
+            data = first.get("v") if isinstance(first.get("v"), dict) else first
 
         def _map_side(side: Any) -> list[DepthLevel]:
             out: list[DepthLevel] = []
@@ -576,7 +605,7 @@ class FyersClient:
             "totalBuyQuantity": int(float(data.get("totalbuyqty") or 0)),
             "totalSellQuantity": int(float(data.get("totalsellqty") or 0)),
             "buy": _map_side(data.get("bids")),
-            "sell": _map_side(data.get("asks")),
+            "sell": _map_side(data.get("ask")),
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
@@ -603,7 +632,8 @@ class FyersClient:
             "oi_flag": "1",
         })
         data = raw.get("data") if isinstance(raw, dict) else None
-        rows = data.get("candles") if isinstance(data, dict) else None
+        rows = raw.get("candles") if isinstance(raw.get("candles"), list) else (
+            data.get("candles") if isinstance(data, dict) else None)
         if not isinstance(rows, list):
             return []
         candles: list[Candle] = []
@@ -615,7 +645,7 @@ class FyersClient:
             v = row[5] if len(row) > 5 else 0
             time_val: Any = ts
             if is_daily:
-                time_val = datetime.utcfromtimestamp(int(ts)).strftime("%Y-%m-%d")
+                time_val = datetime.fromtimestamp(int(ts), tz=timezone.utc).strftime("%Y-%m-%d")
             candles.append({
                 "time": time_val,
                 "open": float(o),
@@ -654,16 +684,19 @@ class FyersClient:
         if not instrument_keys:
             return {}
         raw = self._request("/quotes", {"symbols": ",".join(instrument_keys)})
-        data = raw.get("data", raw) if isinstance(raw, dict) else {}
+        # FYERS returns {"d":[{"v":{..., "greeks":{...}, "symbol":...}}]}.
+        entries = raw.get("d") if isinstance(raw.get("d"), list) else []
         out: dict[str, dict] = {}
-        entries = data.values() if isinstance(data, dict) else (
-            data if isinstance(data, list) else [])
-        for key, entry in (data.items() if isinstance(data, dict) else []):
-            if not isinstance(entry, dict):
+        for item in entries:
+            if not isinstance(item, dict):
                 continue
-            g = entry.get("greeks") if isinstance(entry.get("greeks"), dict) else {}
+            v = item.get("v") if isinstance(item.get("v"), dict) else item
+            key = str(v.get("symbol") or "")
+            if not key:
+                continue
+            g = v.get("greeks") if isinstance(v.get("greeks"), dict) else {}
             out[key] = {
-                "iv": float(g.get("iv") or entry.get("iv") or 0),
+                "iv": float(g.get("iv") or v.get("iv") or 0),
                 "delta": _opt_float(g.get("delta")),
                 "gamma": _opt_float(g.get("gamma")),
                 "theta": _opt_float(g.get("theta")),
@@ -681,17 +714,60 @@ class FyersClient:
     def get_margin(self, instruments: list[dict]):
         return self._unsupported("get_margin")
 
-    def get_pcr(self, symbol, expiry, date, bucket_interval=60):
-        return self._unsupported("get_pcr")
+    # -- data: F&O analytics computed from the option chain -------------------
+    def get_pcr(self, symbol, expiry, date=None, bucket_interval=60):
+        """Put-Call Ratio from total OI of the FYERS option chain (current snapshot)."""
+        return compute_pcr(self.get_option_chain(symbol, expiry))
 
-    def get_max_pain(self, symbol, expiry, date, bucket_interval=60):
-        return self._unsupported("get_max_pain")
+    def get_max_pain(self, symbol, expiry, date=None, bucket_interval=60):
+        """Max-pain strike from the FYERS option chain (current snapshot)."""
+        return compute_max_pain(self.get_option_chain(symbol, expiry))
 
-    def get_oi(self, symbol, expiry, date):
-        return self._unsupported("get_oi")
+    def get_oi(self, symbol, expiry, date=None):
+        """Open interest per strike from the FYERS option chain."""
+        chain = self.get_option_chain(symbol, expiry)
+        strikes = []
+        for row in chain.get("rows", []):
+            ce = row.get("CE")
+            pe = row.get("PE")
+            ce_oi = int((ce or {}).get("openInterest", 0) or 0)
+            pe_oi = int((pe or {}).get("openInterest", 0) or 0)
+            strikes.append({
+                "strikePrice": row.get("strikePrice"),
+                "ceOi": ce_oi,
+                "peOi": pe_oi,
+                "totalOi": ce_oi + pe_oi,
+            })
+        return {
+            "symbol": symbol,
+            "expiryDate": chain.get("expiryDate"),
+            "underlyingValue": chain.get("underlyingValue"),
+            "totalCallOi": chain.get("totalCEOpenInterest", 0),
+            "totalPutOi": chain.get("totalPEOpenInterest", 0),
+            "strikes": strikes,
+        }
 
-    def get_change_oi(self, symbol, expiry, date, interval=1):
-        return self._unsupported("get_change_oi")
+    def get_change_oi(self, symbol, expiry, date=None, interval=1):
+        """Change in open interest per strike from the FYERS option chain."""
+        chain = self.get_option_chain(symbol, expiry)
+        strikes = []
+        for row in chain.get("rows", []):
+            ce = row.get("CE")
+            pe = row.get("PE")
+            ce_chg = int((ce or {}).get("changeinOpenInterest", 0) or 0)
+            pe_chg = int((pe or {}).get("changeinOpenInterest", 0) or 0)
+            strikes.append({
+                "strikePrice": row.get("strikePrice"),
+                "ceChangeOi": ce_chg,
+                "peChangeOi": pe_chg,
+                "totalChangeOi": ce_chg + pe_chg,
+            })
+        return {
+            "symbol": symbol,
+            "expiryDate": chain.get("expiryDate"),
+            "interval": interval,
+            "strikes": strikes,
+        }
 
     def get_fii(self, data_type="NSE_FO|INDEX_FUTURES", interval="1D"):
         return self._unsupported("get_fii")
@@ -700,7 +776,33 @@ class FyersClient:
         return self._unsupported("get_dii")
 
     def get_market_status(self, exchange="NSE"):
-        return self._unsupported("get_market_status")
+        """Trading status for an exchange from FYERS's marketStatus endpoint.
+
+        FYERS returns ``{"marketStatus":[{exchange, segment, market_type, status}, ...]}``.
+        """
+        self.ensure_initialized()
+        raw = self._request("/marketStatus")
+        entries = raw.get("marketStatus") if isinstance(raw.get("marketStatus"), list) else (
+            raw.get("data", raw) if isinstance(raw.get("data"), list) else [])
+        entry = None
+        for item in entries:
+            if isinstance(item, dict) and str(item.get("exchange", "")).upper() == exchange.upper():
+                entry = item
+                break
+        if not isinstance(entry, dict):
+            return {
+                "exchange": exchange, "status": None,
+                "lastUpdated": None, "casStatus": None, "casLastUpdated": None,
+            }
+        return {
+            "exchange": entry.get("exchange", exchange),
+            "status": entry.get("status"),
+            "segment": entry.get("segment"),
+            "marketType": entry.get("market_type"),
+            "lastUpdated": entry.get("last_updated") or entry.get("lastUpdated"),
+            "casStatus": None,
+            "casLastUpdated": None,
+        }
 
     def get_market_holidays(self, date: Optional[str] = None):
         return self._unsupported("get_market_holidays")
