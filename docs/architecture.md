@@ -21,6 +21,10 @@ TBMCP/                       # git repo root = the app
 ├── providers/               # DataProvider abstraction (swap brokers here)
 │   ├── __init__.py          #   create_provider() factory + re-exports
 │   ├── base.py              #   30-method DataProvider protocol
+│   ├── affinity.py          #   AffinityRouter: per-symbol sticky routing across providers
+│   ├── exceptions.py        #   UnsupportedByProvider (a backend signals "I don't serve this")
+│   ├── fyers.py             #   FyersClient — data-only FYERS v3 adapter (SECONDARY)
+│   ├── example_provider.py  #   copy-paste template for the next broker
 │   └── upstox.py            #   UpstoxClient assembler — composed of domain mixins:
 │       ├── upstox_parsing.py      #     raw-response parsing + debug dumps
 │       ├── upstox_connect.py      #     auth + token lifecycle + rate-limited transport
@@ -89,6 +93,19 @@ Rules implied by this diagram:
 - **Analytics are broker-agnostic.** Do not duplicate calculations across MCP
   tools, Falcon routes, frontend JS, and broker clients. Implement shared logic
   once in `analytics/` and call it from both servers.
+
+### Multi-provider routing (FYERS as a secondary source)
+
+When more than one broker is active (Upstox primary + FYERS secondary), an
+`AffinityRouter` (`providers/affinity.py`) sits in front of them and presents the
+same `DataProvider` surface. It **pins each symbol to one broker** (per-symbol
+sticky affinity) so a single chain never mixes two brokers' numbers, fails over
+to a healthy provider on error, and briefly marks a failing provider "down"
+(circuit breaker). `resolve_key` is special-cased to always return the primary's
+key format (the dashboard batch expects Upstox keys). Brokers are selected by
+env flags in `providers/__init__.py` (`UPSTOX_ENABLED` default on,
+`FYERS_ENABLED` + credentials); `TBMCP_PROVIDER=upstox|fyers` still forces one.
+See [decisions/adr-008-multi-provider-routing.md](decisions/adr-008-multi-provider-routing.md).
 
 ## Key patterns
 
@@ -159,6 +176,12 @@ return `json.dumps(...)` strings; the engine handles tool errors.
    split a file when it holds many unrelated responsibilities (line count is a
    smell, not the rule). Details:
    [decisions/adr-007-no-giant-files.md](decisions/adr-007-no-giant-files.md).
+8. **Multi-provider routing is sticky per symbol.** When several brokers are
+   active, the `AffinityRouter` assigns each symbol to exactly one broker and
+   keeps it there; a backend that doesn't serve a method raises
+   `UnsupportedByProvider` and the router falls back. Adding a broker is a new
+   module + one registry branch — never a rewrite of the tools or UI. Details:
+   [decisions/adr-008-multi-provider-routing.md](decisions/adr-008-multi-provider-routing.md).
 
 ## What is explicitly NOT here
 

@@ -251,12 +251,26 @@ All 42 tools (names + args): [`docs/mcp/tools.md`](docs/mcp/tools.md).
 
 - `providers/base.py` defines the **`DataProvider` protocol** (30 methods) —
   the contract every data source must implement.
-- `providers/upstox.py` is the **`UpstoxClient`** adapter (the only provider),
+- `providers/upstox.py` is the **`UpstoxClient`** adapter (the primary provider),
   assembled from focused mixins by domain (`upstox_connect`, `upstox_resolution`,
   `upstox_market_data`, `upstox_fundamentals`) plus shared `upstox_parsing`
   helpers — the public surface (`UpstoxClient`, all protocol methods) is unchanged.
+- `providers/fyers.py` is the **`FyersClient`** adapter — a **data-only secondary**
+  provider (option chain, quotes, depth, history, Greeks). Methods it cannot serve
+  raise `UnsupportedByProvider`. It is `requests`-only (the `fyers-apiv3` SDK does
+  not install on Python 3.13) and reads its `FYERS_*` creds from the portable
+  `.env`; `config.py` is intentionally untouched.
+- `providers/affinity.py` is the **`AffinityRouter`** — when ≥2 providers are
+  active it pins each symbol to one broker (per-symbol sticky affinity), fails
+  over on error, and marks a failing provider "down" (circuit breaker). Its
+  `resolve_key` always returns the primary's (Upstox) key format.
+- `providers/example_provider.py` is a **copy-paste template** for the next
+  broker. Brokers are kept **separate** (no `BaseProvider` inheritance) so removing
+  one is a one-line registry delete.
 - `providers/__init__.py` exports `create_provider(settings)` — the **single
-  switch point**, driven by `TBMCP_PROVIDER` (default `upstox`).
+  switch point**. `TBMCP_PROVIDER=upstox|fyers` forces one provider; when unset,
+  the active set comes from `UPSTOX_ENABLED` (default on) and `FYERS_ENABLED` +
+  credentials. One active → that provider; ≥2 → `AffinityRouter`.
 
 Adding a broker = new module in `providers/` + a factory entry. Do **not** call
 the broker directly from tools, routes, or pages.
@@ -347,6 +361,9 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 - Produces a standalone `TBMcp.exe`; config/token live next to the exe
   (portable folder).
 - Keep include flags in sync with `pyproject.toml` dependencies.
+- The optional FYERS TOTP auto-login (`scripts/fyers_login.py`) imports `pyotp`
+  lazily, so it is **not** required for the build. If you want it inside the
+  frozen `.exe`, add `pyotp` to `--include-package` and to `pyproject.toml`.
 - `main.py` calls `multiprocessing.freeze_support()` for `both` mode under the
   frozen binary — don't remove it. Note: `--reload` is available for dev but
   not passed through to the child process in `both` mode (set explicitly when

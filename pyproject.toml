@@ -12,6 +12,7 @@ dependencies = [
     "falcon",
     "waitress",
     "requests",
+    "pyotp",
 ]
 
 # Dev/test tooling — installed with `uv sync --group dev` (CI), never part of

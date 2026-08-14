@@ -22,6 +22,7 @@ debug_*.json
 # Secrets — never commit credentials
 .env
 .upstox-token.json
+.fyers-token.json
 
 # OS / editor cruft
 .DS_Store

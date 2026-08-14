@@ -14,7 +14,7 @@ development:
 python -m nuitka --onefile \
     --include-package=zeromcp \
     --include-data-dir=frontend=frontend \
-    --include-package=falcon,waitress,requests main.py
+    --include-package=falcon,waitress,requests,pyotp main.py
 ```
 
 ## What it produces
@@ -45,4 +45,6 @@ python -m nuitka --onefile \
 - `main.py` calls `multiprocessing.freeze_support()` so the `both` mode (which
   spawns the UI process) works inside a frozen binary.
 - Keep the include flags in sync with `pyproject.toml`'s dependency list when
-  they change.
+  they change. `pyotp` is now a hard dependency (the FYERS TOTP auto-login in
+  `providers/fyers_login.py` uses it), so it is included in the build command
+  above and must stay in `--include-package`.

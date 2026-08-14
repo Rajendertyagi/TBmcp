@@ -27,11 +27,38 @@ variables override the file.
 | `UPSTOX_API_KEY` | Upstox API key |
 | `UPSTOX_API_SECRET` | Upstox API secret |
 | `UPSTOX_REDIRECT_URI` | OAuth redirect URI (default `http://127.0.0.1:8888/upstox/callback`) |
-| `TBMCP_PROVIDER` | Data provider to use (default `upstox`; the switch point for future brokers) |
+| `TBMCP_PROVIDER` | Force a single data provider: `upstox` (default) or `fyers`. Leave unset to use the multi-provider registry below. |
 | `UPSTOX_RATE_LIMIT_GAP_MS` | Throttle between Upstox calls (default `250`) |
+| `UPSTOX_ENABLED` | Enable the Upstox provider (default `true`). Set `false` to run FYERS-only. |
+| `FYERS_ENABLED` | Enable the FYERS provider (default `false`). Requires the two credentials below. |
+| `FYERS_APP_ID` | FYERS app id (e.g. `XXXXXX-100`). |
+| `FYERS_SECRET` | FYERS app secret. |
+| `FYERS_PIN` | Optional 4-digit FYERS PIN (needed for refresh / TOTP login). |
+| `FYERS_TOTP_SECRET` | Optional TOTP secret for the daily auto-login helper. |
+| `FYERS_REDIRECT_URI` | OAuth redirect URI for the FYERS login helper. |
+| `FYERS_TIMEOUT` | FYERS request timeout in seconds (default `10`). |
 
 The OAuth token is saved to `.upstox-token.json` in the same folder. Both files
-are gitignored — never commit them.
+are gitignored — never commit them. FYERS caches its token in `.fyers-token.json`
+(next to the app), also gitignored.
+
+### FYERS (optional secondary provider)
+
+FYERS is **data-only** (option chain, quotes, depth, history, Greeks) and is
+**off by default**. To turn it on, set `FYERS_ENABLED=true` plus `FYERS_APP_ID`
+and `FYERS_SECRET` in your `.env`. When both Upstox and FYERS are enabled, each
+symbol is pinned to one broker (sticky affinity) so a chain never mixes two
+brokers' numbers; FYERS is used as a fallback when Upstox is down.
+
+FYERS access tokens expire at the end of the trading day, so log in each morning:
+
+```bash
+python -m providers.fyers_login
+```
+
+If `FYERS_TOTP_SECRET` and `FYERS_PIN` are set, this logs in automatically (no
+browser). Otherwise it prints an OAuth URL, you log in, and paste the
+`auth_code` back. See [decisions/adr-008-multi-provider-routing.md](../decisions/adr-008-multi-provider-routing.md).
 
 You can also set credentials through the dashboard: the **gear icon → Upstox**
 page saves them to `.env` and offers one-click login (no copy-paste), which
