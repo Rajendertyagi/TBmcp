@@ -24,6 +24,14 @@ from .auth import (
     LoginUrlResource,
     SettingsResource,
 )
+from .fyers_auth import (
+    FyersCallbackResource,
+    FyersLoginResource,
+    FyersLoginStatusResource,
+    FyersLoginUrlResource,
+    FyersSettingsResource,
+    FyersTotpLoginResource,
+)
 from .fundamentals import (
     FundamentalsResource,
     NewsResource,
@@ -43,6 +51,12 @@ __all__ = [
     'LoginResource',
     'CallbackResource',
     'LoginStatusResource',
+    'FyersSettingsResource',
+    'FyersLoginUrlResource',
+    'FyersLoginResource',
+    'FyersTotpLoginResource',
+    'FyersCallbackResource',
+    'FyersLoginStatusResource',
     'FundamentalsResource',
     'NewsResource',
     'OptionGreeksResource',

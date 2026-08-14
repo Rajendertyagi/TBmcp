@@ -127,6 +127,18 @@ UPSTOX_REDIRECT_URI_ENV: Final[str] = "UPSTOX_REDIRECT_URI"
 # field (it is saved to the .env).
 DEFAULT_UPSTOX_REDIRECT_URI: Final[str] = "http://127.0.0.1:8888/upstox/callback"
 
+# --- FYERS credential env-var names (single source of truth) -----------------
+FYERS_APP_ID_ENV: Final[str] = "FYERS_APP_ID"
+FYERS_SECRET_ENV: Final[str] = "FYERS_SECRET"
+FYERS_PIN_ENV: Final[str] = "FYERS_PIN"
+FYERS_TOTP_SECRET_ENV: Final[str] = "FYERS_TOTP_SECRET"
+FYERS_REDIRECT_URI_ENV: Final[str] = "FYERS_REDIRECT_URI"
+FYERS_ENABLED_ENV: Final[str] = "FYERS_ENABLED"
+# Default redirect URI for the FYERS OAuth login. It MUST match a value registered
+# in your FYERS app's settings AND line up with the dashboard port (defaults to
+# 8888). The dashboard catches the auth_code at /fyers/callback for one-click login.
+DEFAULT_FYERS_REDIRECT_URI: Final[str] = "http://127.0.0.1:8888/fyers/callback"
+
 # --- Market Information APIs (all under /v2/market) ---------------------------
 # Params VERIFIED against Upstox docs:
 #   pcr / max-pain / oi:        instrument_key, expiry, date[, bucket_interval]

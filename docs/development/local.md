@@ -64,6 +64,13 @@ You can also set credentials through the dashboard: the **gear icon → Upstox**
 page saves them to `.env` and offers one-click login (no copy-paste), which
 bounces the browser through `/upstox/callback`.
 
+FYERS has its own dashboard page: the **FYERS** link in the top bar opens the
+FYERS setup page. It saves `FYERS_APP_ID`/`FYERS_SECRET`/`FYERS_PIN`/
+`FYERS_TOTP_SECRET` to `.env` (and flips `FYERS_ENABLED=true`), and offers two
+login paths — **Get Login Link** (OAuth, bounces through `/fyers/callback`,
+one-click like Upstox) and **Login with TOTP** (server-side daily auto-login,
+no browser, when `FYERS_TOTP_SECRET` + `FYERS_PIN` are saved).
+
 ## Running
 
 | Command | What it does |

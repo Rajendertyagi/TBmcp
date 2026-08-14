@@ -39,6 +39,24 @@ Base URL: `http://127.0.0.1:8888` (default; `--host`/`--port` override).
 | GET | `/api/login-status` | — | `{"connected": true/false}` — whether a saved Upstox token exists (never exposes the token itself). |
 | GET | `/upstox/callback` | `code` (Upstox redirects here after the owner authorizes), `error` | Finishes the OAuth login automatically and redirects back to `/` with a success page. |
 
+## FYERS settings & login
+
+FYERS is a **data-only secondary provider**. Its dashboard login mirrors Upstox's
+but supports two flows: the OAuth code flow (one-click, like Upstox) and a
+**daily TOTP auto-login** (server-side, no browser) — the dependable path now
+that FYERS refresh tokens are unreliable. Saving credentials also flips
+`FYERS_ENABLED=true` so the provider becomes active.
+
+| Method | Path | Params / body | Response |
+|---|---|---|---|
+| GET | `/api/fyers-settings` | — | `{"app_id", "redirect_uri"}` (secret/pin/totp never leave the server). |
+| POST | `/api/fyers-settings` | JSON `{"app_id", "secret", "pin", "totp_secret", "redirect_uri"}` | `{"ok": true}`; persists creds and enables FYERS. Missing app_id/secret → 400. |
+| GET | `/api/fyers-login-url` | `key` (required), `redirect` (optional, falls back to `DEFAULT_FYERS_REDIRECT_URI`) | `{"url": <FYERS authorization URL>}`. |
+| POST | `/api/fyers-login` | JSON `{"code", "redirect_uri"}` | `{"ok": true}` after exchanging the auth code for a token; recreates the client. |
+| POST | `/api/fyers-totp-login` | — (body ignored) | `{"ok": true, "token_len": N}` after the server-side daily TOTP login; recreates the client. Needs `FYERS_TOTP_SECRET` + `FYERS_PIN` in saved settings. |
+| GET | `/api/fyers-login-status` | — | `{"connected": true/false}` — whether a saved FYERS token exists. |
+| GET | `/fyers/callback` | `auth_code` (FYERS redirects here after the owner authorizes), `error` | Finishes the OAuth login automatically and redirects back to `/` with a success page. |
+
 ## Response conventions
 
 - Client calls are wrapped by `_safe()`: a failure returns `{"error": "..."}`

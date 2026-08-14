@@ -41,6 +41,7 @@ def _build_fyers(settings: Settings) -> FyersClient:
         pin=fe["pin"],
         access_token=fe["access_token"],
         redirect_uri=fe["redirect_uri"],
+        totp_secret=fe["totp_secret"],
     )
 
 

@@ -12,7 +12,7 @@ changing the 42 MCP tools, the dashboard, or the analytics.
 | Exceptions | `providers/exceptions.py` | `UnsupportedByProvider` — a backend signals "I don't serve this". |
 | Template | `providers/example_provider.py` | Copy-paste starter for the next broker (separate, not inherited). |
 | FYERS client | `providers/fyers.py` | `FyersClient`: data-only, `requests`-only, token lifecycle, per-provider `resolve_key` (`NSE:NIFTY50-INDEX` form). |
-| Login helper | `scripts/fyers_login.py` | `python -m providers.fyers_login` — daily TOTP auto-login or manual OAuth code exchange. |
+| Login helper | `providers/fyers_login.py` | `python -m providers.fyers_login` — daily TOTP auto-login or manual OAuth code exchange. |
 | Router | `providers/affinity.py` | `AffinityRouter`: per-symbol pinning, primary-first fallback, circuit breaker, `resolve_key` special-cased to Upstox format. |
 | Registry | `providers/__init__.py` | Env-driven: `TBMCP_PROVIDER` (legacy) or `UPSTOX_ENABLED`/`FYERS_ENABLED` + creds. 1 active → that provider; ≥2 → router. |
 | Security | `.gitignore` | Added `.fyers-token.json`. |

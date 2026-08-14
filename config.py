@@ -19,6 +19,12 @@ from constants import (
     UPSTOX_API_KEY_ENV,
     UPSTOX_API_SECRET_ENV,
     UPSTOX_REDIRECT_URI_ENV,
+    FYERS_APP_ID_ENV,
+    FYERS_SECRET_ENV,
+    FYERS_PIN_ENV,
+    FYERS_TOTP_SECRET_ENV,
+    FYERS_REDIRECT_URI_ENV,
+    FYERS_ENABLED_ENV,
 )
 
 # Portable layout: ALL config lives in the app's own folder (APP_DIR) so the whole
@@ -96,6 +102,39 @@ def write_env_file(api_key: str, api_secret: str, redirect_uri: str = "") -> Non
                 fh.write(f'{key}="{val}"\n')
     except OSError as exc:
         raise OSError(f"Could not write credentials to {PORTABLE_ENV_FILE}: {exc}") from exc
+
+
+def write_fyers_env(
+    app_id: str,
+    secret: str,
+    pin: str = "",
+    totp_secret: str = "",
+    redirect_uri: str = "",
+    enabled: bool = True,
+) -> None:
+    """Persist FYERS credentials to the portable .env next to the app.
+
+    Preserves any other keys already present in that .env file. Saving credentials
+    also flips ``FYERS_ENABLED=true`` so the provider becomes active on the next
+    rebuild (the dashboard calls :func:`rebuild_client` after a successful save).
+    """
+    os.makedirs(APP_DIR, exist_ok=True)
+    data = _read_env_file(PORTABLE_ENV_FILE)
+    data[FYERS_APP_ID_ENV] = app_id
+    data[FYERS_SECRET_ENV] = secret
+    if pin:
+        data[FYERS_PIN_ENV] = pin
+    if totp_secret:
+        data[FYERS_TOTP_SECRET_ENV] = totp_secret
+    if redirect_uri:
+        data[FYERS_REDIRECT_URI_ENV] = redirect_uri
+    data[FYERS_ENABLED_ENV] = "true" if enabled else "false"
+    try:
+        with open(PORTABLE_ENV_FILE, "w", encoding="utf-8") as fh:
+            for key, val in data.items():
+                fh.write(f'{key}="{val}"\n')
+    except OSError as exc:
+        raise OSError(f"Could not write FYERS credentials to {PORTABLE_ENV_FILE}: {exc}") from exc
 
 
 def resolve_token_read_path() -> str:

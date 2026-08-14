@@ -130,6 +130,94 @@ class TestLogin:
         assert "client_id=k" in resp.json["url"]
 
 
+class TestFyersLogin:
+    """FYERS settings + login endpoints behave like the Upstox ones."""
+
+    @pytest.fixture
+    def fake_fyers(self, monkeypatch):
+        class FakeFyers:
+            def __init__(self, **kw):
+                self.kw = kw
+
+            @staticmethod
+            def build_login_url(key, redirect, code_challenge=None):
+                return f"https://fy/auth?client_id={key}&redirect_uri={redirect}"
+
+            def exchange_code_for_token(self, code, redirect_uri, code_verifier=None):
+                return "fake-token"
+
+            def login_with_totp(self):
+                return "fake-totp-token"
+
+        monkeypatch.setattr("api.routes.fyers_auth.FyersClient", FakeFyers)
+        monkeypatch.setattr(
+            "api.routes.fyers_auth.load_fyers_env",
+            lambda: {
+                "app_id": "A", "secret": "S", "pin": "P", "totp_secret": "T",
+                "redirect_uri": "http://r", "access_token": "", "enabled": True,
+            },
+        )
+        return FakeFyers
+
+    def test_settings_get_returns_app_id_not_secret(self, api_client, isolated_config):
+        resp = api_client.simulate_get("/api/fyers-settings")
+        assert resp.status_code == 200
+        assert "app_id" in resp.json
+        assert "redirect_uri" in resp.json
+        assert "secret" not in resp.json  # the secret never leaves the server
+        assert "pin" not in resp.json
+        assert "totp_secret" not in resp.json
+
+    def test_settings_post_saves_enables_and_acknowledges(self, api_client, isolated_config):
+        resp = api_client.simulate_post(
+            "/api/fyers-settings",
+            json={"app_id": "A", "secret": "S", "pin": "P", "totp_secret": "T",
+                  "redirect_uri": "http://r"},
+        )
+        assert resp.status_code == 200
+        assert resp.json == {"ok": True}
+        saved = isolated_config.joinpath(".env").read_text(encoding="utf-8")
+        assert 'FYERS_APP_ID="A"' in saved
+        assert 'FYERS_SECRET="S"' in saved
+        assert 'FYERS_ENABLED="true"' in saved
+
+    def test_settings_post_missing_secret_is_400(self, api_client, isolated_config):
+        resp = api_client.simulate_post("/api/fyers-settings", json={"app_id": "A"})
+        assert resp.status_code == 400
+
+    def test_login_status_connected(self, api_client, monkeypatch, tmp_path):
+        token = tmp_path / "f.json"
+        token.write_text("{}", encoding="utf-8")
+        monkeypatch.setattr("api.routes.fyers_auth.FYERS_TOKEN_FILE", str(token))
+        assert api_client.simulate_get("/api/fyers-login-status").json == {"connected": True}
+
+    def test_login_status_disconnected(self, api_client, monkeypatch, tmp_path):
+        missing = tmp_path / "nope.json"
+        monkeypatch.setattr("api.routes.fyers_auth.FYERS_TOKEN_FILE", str(missing))
+        assert api_client.simulate_get("/api/fyers-login-status").json == {"connected": False}
+
+    def test_login_requires_code(self, api_client, fake_fyers):
+        resp = api_client.simulate_post("/api/fyers-login", json={})
+        assert resp.status_code == 400
+
+    def test_login_exchanges_code_and_acknowledges(self, api_client, fake_fyers):
+        resp = api_client.simulate_post(
+            "/api/fyers-login", json={"code": "abc", "redirect_uri": "http://r"}
+        )
+        assert resp.status_code == 200
+        assert resp.json == {"ok": True}
+
+    def test_totp_login_acknowledges(self, api_client, fake_fyers):
+        resp = api_client.simulate_post("/api/fyers-totp-login", json={})
+        assert resp.status_code == 200
+        assert resp.json["ok"] is True
+
+    def test_login_url_built_from_key(self, api_client, fake_fyers):
+        resp = api_client.simulate_get("/api/fyers-login-url", params={"key": "A"})
+        assert resp.status_code == 200
+        assert "client_id=A" in resp.json["url"]
+
+
 class TestFundamentalsNewsGreeks:
     def test_fundamentals_company_profile(self, api_client):
         resp = api_client.simulate_get(

@@ -361,7 +361,7 @@ See [`docs/packaging/nuitka.md`](docs/packaging/nuitka.md).
 - Produces a standalone `TBMcp.exe`; config/token live next to the exe
   (portable folder).
 - Keep include flags in sync with `pyproject.toml` dependencies.
-- The optional FYERS TOTP auto-login (`scripts/fyers_login.py`) imports `pyotp`
+- The optional FYERS TOTP auto-login (`providers/fyers_login.py`) imports `pyotp`
   lazily, so it is **not** required for the build. If you want it inside the
   frozen `.exe`, add `pyotp` to `--include-package` and to `pyproject.toml`.
 - `main.py` calls `multiprocessing.freeze_support()` for `both` mode under the

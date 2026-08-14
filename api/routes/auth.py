@@ -7,6 +7,7 @@ helpers from :mod:`api.app`.
 """
 from __future__ import annotations
 
+import html
 import os
 
 import falcon
@@ -129,7 +130,7 @@ class CallbackResource:
             "<title>Upstox login</title></head>"
             "<body style='font-family:system-ui,sans-serif;text-align:center;"
             "padding-top:4rem'>"
-            f"<h2>{icon}</h2><p>{message}</p>"
+            f"<h2>{icon}</h2><p>{html.escape(message)}</p>"
             "<p><a href='/'>Return to the app</a></p>"
             "</body></html>"
         )

@@ -139,12 +139,14 @@ class FyersClient:
         pin: str = "",
         access_token: str = "",
         redirect_uri: str = "",
+        totp_secret: str = "",
     ) -> None:
         self.app_id = app_id
         self.secret = secret
         self.pin = pin
         self.redirect_uri = redirect_uri
         self._access_token = access_token
+        self._totp_secret_value = totp_secret
         self._ready = False
 
     # -- auth helpers ----------------------------------------------------------
@@ -210,7 +212,7 @@ class FyersClient:
         return self.exchange_code_for_token(auth_code, self.redirect_uri or "")
 
     def _totp_secret(self) -> str:
-        return os.environ.get("FYERS_TOTP_SECRET", "")
+        return self._totp_secret_value or os.environ.get("FYERS_TOTP_SECRET", "")
 
     def _mint_auth_code_via_totp(self) -> str:
         import base64
@@ -404,6 +406,7 @@ class FyersClient:
             "symbol": key,
             "strikecount": str(FYERS_STRIKE_COUNT),
             "timestamp": str(expiry_epoch),
+            "greeks": "1",
         })
         data = raw.get("data", raw) if isinstance(raw, dict) else {}
         rows, underlying, totals = self._parse_chain_rows(data, expiry_date)

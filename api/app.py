@@ -105,6 +105,14 @@ def create_app() -> falcon.App:
     app.add_route("/upstox/callback", CallbackResource())
     # Lets the UI show a "Connected" indicator without exposing the token.
     app.add_route("/api/login-status", LoginStatusResource())
+    # FYERS settings + login (OAuth code flow and daily TOTP auto-login).
+    app.add_route("/api/fyers-settings", FyersSettingsResource())
+    app.add_route("/api/fyers-login-url", FyersLoginUrlResource())
+    app.add_route("/api/fyers-login", FyersLoginResource())
+    app.add_route("/api/fyers-totp-login", FyersTotpLoginResource())
+    # One-click (no-copy-paste) login: FYERS redirects the browser here with the code.
+    app.add_route("/fyers/callback", FyersCallbackResource())
+    app.add_route("/api/fyers-login-status", FyersLoginStatusResource())
     app.add_route("/api/fundamentals", FundamentalsResource())
     app.add_route("/api/news", NewsResource())
     app.add_route("/api/greeks", OptionGreeksResource())
@@ -139,6 +147,12 @@ from .routes import (  # noqa: E402
     ChainResource,
     ExpiriesResource,
     FundamentalsResource,
+    FyersCallbackResource,
+    FyersLoginResource,
+    FyersLoginStatusResource,
+    FyersLoginUrlResource,
+    FyersSettingsResource,
+    FyersTotpLoginResource,
     HistoryResource,
     LoginResource,
     LoginStatusResource,

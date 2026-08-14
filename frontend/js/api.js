@@ -85,6 +85,41 @@ export var api = {
     return request("/api/login-status");
   },
 
+  async fyersSettings() {
+    return request("/api/fyers-settings");
+  },
+
+  async saveFyersSettings(payload) {
+    return request("/api/fyers-settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async fyersLoginUrl(key, redirect) {
+    return request("/api/fyers-login-url?key=" + enc(key) + "&redirect=" + enc(redirect));
+  },
+
+  async fyersLogin(code, redirect) {
+    return request("/api/fyers-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code, redirect_uri: redirect }),
+    });
+  },
+
+  async fyersTotpLogin() {
+    return request("/api/fyers-totp-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+
+  async fyersLoginStatus() {
+    return request("/api/fyers-login-status");
+  },
+
   async fundamentals(symbol, endpoint) {
     var q = "?symbol=" + enc(symbol) + "&endpoint=" + enc(endpoint);
     return request("/api/fundamentals" + q);

@@ -8,6 +8,8 @@ import { createHomePage } from "./pages/home.js";
 import { createMarketPage } from "./pages/market.js";
 import { createVixPage } from "./pages/vix.js";
 import { createUpstoxPage } from "./pages/upstox.js";
+import { createFyersPage } from "./pages/fyers.js";
+import { createBrokersPage } from "./pages/brokers.js";
 import { createChartsHome, createChartsPage } from "./pages/charts.js";
 import { createToolsPage } from "./pages/tools.js";
 import { TICKER_REFRESH_MS } from "./utils/config.js";
@@ -15,7 +17,8 @@ import { TICKER_REFRESH_MS } from "./utils/config.js";
 // Register every page once. To add a new page: write pages/foo.js exporting
 // createFooPage() and add exactly one line here. Nothing else changes.
 // Chain/chart pages are hidden from the top tabs: they live under the "Option
-// Chain" / "Charts" header links (overview cards). Upstox is reached via the gear.
+// Chain" / "Charts" header links (overview cards). Broker settings (Upstox +
+// FYERS login) are reached via the gear icon.
 registerRoute("home", "Home", function () {
   return createHomePage();
 }, { showTab: false, group: "chain" });
@@ -34,6 +37,12 @@ registerRoute("vix", "INDIA VIX", function () {
 registerRoute("upstox", "Upstox", function () {
   return createUpstoxPage();
 }, { showTab: false });
+registerRoute("fyers", "FYERS", function () {
+  return createFyersPage();
+}, { showTab: false });
+registerRoute("brokers", "Brokers", function () {
+  return createBrokersPage();
+}, { showTab: false });
 registerRoute("charts", "Charts", function () {
   return createChartsHome();
 }, { showTab: false, group: "chart" });
@@ -48,7 +57,7 @@ registerRoute("chart-sensex", "SENSEX", function () {
 }, { showTab: false, group: "chart" });
 registerRoute("tools", "Tools", function () {
   return createToolsPage();
-}, { showTab: true });
+}, { showTab: false });
 
 function init() {
   var container = document.querySelector(".tbmcp-content");
@@ -66,8 +75,11 @@ function init() {
   document.getElementById("chartsLink").addEventListener("click", function () {
     navigate("charts");
   });
+  document.getElementById("toolsLink").addEventListener("click", function () {
+    navigate("tools");
+  });
   document.getElementById("gearBtn").addEventListener("click", function () {
-    navigate("upstox");
+    navigate("brokers");
   });
 
   renderTicker();

@@ -62,6 +62,7 @@ def main() -> int:
         secret=env["secret"],
         pin=env["pin"],
         redirect_uri=env["redirect_uri"],
+        totp_secret=env["totp_secret"],
     )
 
     if env["totp_secret"] and env["pin"]:
